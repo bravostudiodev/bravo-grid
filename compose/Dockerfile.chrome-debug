@@ -1,0 +1,50 @@
+# docker build -f node-chrome-debug/Dockerfile -t seleniumext/node-chrome-debug:custom .
+FROM selenium/node-chrome-debug:3.0.1-barium
+MAINTAINER IgorV
+
+USER root
+
+RUN sed -i 's@-jar /opt/selenium/selenium-server-standalone.jar@-cp "/opt/selenium/selenium-server-standalone.jar:/opt/selenium/ext/*" org.openqa.grid.selenium.GridLauncherV3@' \
+    /opt/bin/entry_point.sh \
+ && sed -i 's@\\"seleniumProtocol\\": \\"WebDriver\\"@\\"seleniumProtocol\\": \\"WebDriver\\",\n      \\"extension.bravoCapability\\": true@' \
+    /opt/selenium/generate_config \
+ && sed -i 's@\\"registerCycle\\": $NODE_REGISTER_CYCLE@\\"registerCycle\\": $NODE_REGISTER_CYCLE,\n  \\"servlets\\": [\n    \\"com.bravostudiodev.grid.BravoExtensionServlet\\"\n  ]@' \
+    /opt/selenium/generate_config
+
+ADD node-ext/ /opt/selenium/ext/
+
+RUN chown -R seluser:seluser /opt/selenium/
+
+#RUN echo deb http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main | tee /etc/apt/sources.list.d/webupd8team.list \
+# && echo deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main | tee -a /etc/apt/sources.list.d/webupd8team.list \
+# && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys C2518248EEA14886 \
+# && echo debconf shared/accepted-oracle-license-v1-1 select true | debconf-set-selections \
+# && echo debconf shared/accepted-oracle-license-v1-1 seen true | debconf-set-selections \
+# && apt-get update -y \
+# && apt-get install -y --no-install-recommends \
+#   oracle-java8-installer \
+#   oracle-java8-set-default \
+# && rm -r /var/lib/apt/lists/*
+ 
+#RUN sed -i 's/main universe$/main universe multiverse/' /etc/apt/sources.list \
+# && mkdir -p /var/lib/update-notifier/package-data-downloads/partial/ \
+# && chown -R _apt:root /var/lib/update-notifier/package-data-downloads/partial/ \
+# && apt-get update -y \
+# && echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | debconf-set-selections \
+# && apt-get install -y --no-install-recommends \
+#     apt-transport-https \
+#     ttf-mscorefonts-installer \
+# && rm -r /var/lib/apt/lists/*
+
+#RUN apt-get update -y \
+# && apt-get install -y --no-install-recommends \
+#    idesk \
+#	 rox-filer \
+# && rm -r /var/lib/apt/lists/* \
+# && sed -i 's/^fluxbox/idesk \&\nfluxbox/' /opt/bin/entry_point.sh
+# 
+#ADD idesk/ /root/
+
+
+#Continue as root because of problems with VNC server execution as seluser
+#USER seluser

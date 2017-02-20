@@ -1,0 +1,24 @@
+**/.idea/
+**/.idea_modules/
+**/out/
+**/target/
+
+*.orig
+**/*.iml
+*.iws
+**/ext/
+**/*.jar
+**/*.log
+
+### Maven ###
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+**/.mvn/timing.properties
+
+compose/hub-ext
+compose/node-ext

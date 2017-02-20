@@ -1,0 +1,75 @@
+#docker-compose up -d
+#docker-compose scale firefox=4 chrome=2
+#NOTE: context path is relative to this compose file
+version: '2'
+
+services:
+  hub:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.hub
+    image: bravo/grid/hub
+    ports:
+      - 4444:4444
+
+  firefox:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.firefox
+    image: bravo/grid/firefox
+    ports: # <port4VNC>:5900
+      - 5900:5900
+    volumes:
+      - /dev/urandom:/dev/random
+    depends_on:
+      - hub
+    environment:
+      - HUB_PORT_4444_TCP_ADDR=hub
+      - HUB_PORT_4444_TCP_PORT=4444
+
+  chrome:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.chrome
+    image: bravo/grid/chrome
+    ports: # <port4VNC>:5900
+      - 5901:5900
+    volumes:
+      - /dev/urandom:/dev/random
+    depends_on:
+      - hub
+    environment:
+      - HUB_PORT_4444_TCP_ADDR=hub
+      - HUB_PORT_4444_TCP_PORT=4444
+      #- HTTP_PROXY=http://192.168.0.18:8081/
+
+  firefox-debug:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.firefox-debug
+    image: bravo/grid/firefox-debug
+    ports: # <port4VNC>:5900
+      - 5900:5900
+    volumes:
+      - /dev/urandom:/dev/random
+    depends_on:
+      - hub
+    environment:
+      - HUB_PORT_4444_TCP_ADDR=hub
+      - HUB_PORT_4444_TCP_PORT=4444
+
+  chrome-debug:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.chrome-debug
+    image: bravo/grid/chrome-debug
+    ports: # <port4VNC>:5900
+      - 5901:5900
+    volumes:
+      - /dev/urandom:/dev/random
+    depends_on:
+      - hub
+    environment:
+      - HUB_PORT_4444_TCP_ADDR=hub
+      - HUB_PORT_4444_TCP_PORT=4444
+      #- HTTP_PROXY=http://192.168.0.18:8081/
