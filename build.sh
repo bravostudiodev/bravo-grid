@@ -9,11 +9,9 @@ case "$OSTYPE" in
         export MSYS_NO_PATHCONV=1
         docker-machine start 1> /dev/null 2> /dev/null
         eval $(docker-machine env --shell bash 2> /dev/null)
-		DOCKER_BINPATH="$(docker-machine ssh default which docker)"
 		TEMPVOLUME="$(mount | grep $TEMP | sed -e 's/\([A-Z]\):\(.*\) on .*/\/\l\1\2/')/$(basename ${TEMPVOLUME})"
         ;;
     *)
-		DOCKER_BINPATH="$(which docker)"
         ;;
 esac
 
@@ -21,7 +19,7 @@ docker build -t bravo/xmvn:3.3.9 ./xmvn
 
 cp -a ./bravo-*/ ./deps-*/ ./compose/ ./pom.xml ${TEMPVOLUME}/
 M2VOLUME="$(echo ~)/.m2"
-VOLUMES="-v ${TEMPVOLUME}:/bravo-grid-workspace -v ${M2VOLUME}:/root/.m2 -v /var/run/docker.sock:/var/run/docker.sock -v ${DOCKER_BINPATH}:/bin/docker"
+VOLUMES="-v ${TEMPVOLUME}:/bravo-grid-workspace -v ${M2VOLUME}:/root/.m2 -v /var/run/docker.sock:/var/run/docker.sock"
 
 if [ -z "$@" ]; then
 	MVN_ARGS="install"

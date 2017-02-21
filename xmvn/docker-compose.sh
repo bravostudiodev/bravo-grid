@@ -39,7 +39,11 @@ fi
 if [ ! -z "${IN_CONTAINER}" ]; then
   VOLUMES_FROM=$(docker inspect -f '{{range .HostConfig.VolumesFrom }}--volumes-from {{ . }} {{end}}' ${IN_CONTAINER})
   VOLUMES=$(docker inspect -f '{{range .Mounts}}{{if ne "local" .Driver}}-v {{.Source}}:{{.Destination}} {{end}}{{end}}' ${IN_CONTAINER})
-  VOLUMES="${VOLUMES} -v $DOCKER_HOST:$DOCKER_HOST" 
+  VOLUMES="${VOLUMES} -v $DOCKER_HOST:$DOCKER_HOST"
+  DOCKER_BINARY="$(which docker)"
+  if [ ! -z "${DOCKER_BINARY}" ]; then
+    VOLUMES="${VOLUMES} -v ${DOCKER_BINARY}:/bin/docker"
+  fi
 else
   if [ -S "$DOCKER_HOST" ]; then
       DOCKER_ADDR="-v $DOCKER_HOST:$DOCKER_HOST -e DOCKER_HOST"
