@@ -2,6 +2,7 @@ package com.bravostudiodev.grid;
 
 import org.sikuli.api.DesktopScreenRegion;
 import org.sikuli.api.ImageTarget;
+import org.sikuli.api.ScreenLocation;
 import org.sikuli.api.ScreenRegion;
 import org.sikuli.api.robot.Keyboard;
 import org.sikuli.api.robot.Mouse;
@@ -60,6 +61,38 @@ public class SikuliScreen {
         return imageToBase64(region.capture());
     }
 
+    public void drag() {
+        remoteMouse.click(primaryScreen.getCenter());
+    }
+
+    public void drag(int xOff, int yOff) {
+        remoteMouse.drag(primaryScreen.getCenter().getRelativeScreenLocation(xOff, yOff));
+    }
+
+    public void drag(ScreenRegion region) {
+        remoteMouse.drag(region.getCenter());
+    }
+
+    public void drag(ScreenRegion region, int xOff, int yOff) {
+        remoteMouse.drag(region.getCenter().getRelativeScreenLocation(xOff, yOff));
+    }
+
+    public void drop() {
+        remoteMouse.click(primaryScreen.getCenter());
+    }
+
+    public void drop(int xOff, int yOff) {
+        remoteMouse.drop(primaryScreen.getCenter().getRelativeScreenLocation(xOff, yOff));
+    }
+
+    public void drop(ScreenRegion region) {
+        remoteMouse.drop(region.getCenter());
+    }
+
+    public void drop(ScreenRegion region, int xOff, int yOff) {
+        remoteMouse.drop(region.getCenter().getRelativeScreenLocation(xOff, yOff));
+    }
+
     public void click() {
         remoteMouse.click(primaryScreen.getCenter());
     }
@@ -90,6 +123,90 @@ public class SikuliScreen {
 
     public void rightClick(ScreenRegion region, int xOff, int yOff) {
         remoteMouse.rightClick(region.getCenter().getRelativeScreenLocation(xOff, yOff));
+    }
+
+    public void doubleClick() {
+        remoteMouse.doubleClick(primaryScreen.getCenter());
+    }
+
+    public void doubleClick(int xOff, int yOff) {
+        remoteMouse.doubleClick(primaryScreen.getCenter().getRelativeScreenLocation(xOff, yOff));
+    }
+
+    public void doubleClick(ScreenRegion region) {
+        remoteMouse.doubleClick(region.getCenter());
+    }
+
+    public void doubleClick(ScreenRegion region, int xOff, int yOff) {
+        remoteMouse.doubleClick(region.getCenter().getRelativeScreenLocation(xOff, yOff));
+    }
+
+    public void hover() {
+        remoteMouse.hover(primaryScreen.getCenter());
+    }
+
+    public void hover(int xOff, int yOff) {
+        remoteMouse.hover(primaryScreen.getCenter().getRelativeScreenLocation(xOff, yOff));
+    }
+
+    public void hover(ScreenRegion region) {
+        remoteMouse.hover(region.getCenter());
+    }
+
+    public void hover(ScreenRegion region, int xOff, int yOff) {
+        remoteMouse.hover(region.getCenter().getRelativeScreenLocation(xOff, yOff));
+    }
+
+    public void move() {
+        remoteMouse.move(primaryScreen.getCenter());
+    }
+
+    public void move(int xOff, int yOff) {
+        remoteMouse.move(primaryScreen.getCenter().getRelativeScreenLocation(xOff, yOff));
+    }
+
+    public void move(ScreenRegion region) {
+        remoteMouse.move(region.getCenter());
+    }
+
+    public void move(ScreenRegion region, int xOff, int yOff) {
+        remoteMouse.move(region.getCenter().getRelativeScreenLocation(xOff, yOff));
+    }
+
+    public void press() {
+        remoteMouse.press();
+    }
+
+    public void rightPress() {
+        remoteMouse.rightPress();
+    }
+
+    public void release() {
+        remoteMouse.release();
+    }
+
+    public void rightRelease() {
+        remoteMouse.rightRelease();
+    }
+
+    public void wheel(int direction, int steps) {
+        remoteMouse.wheel(direction, steps);
+    }
+
+    public void mouseDown(int buttons){
+        remoteMouse.mouseDown(buttons);
+    }
+
+    public void mouseUp(){
+        remoteMouse.mouseUp();
+    }
+
+    public void mouseUp(int buttons){
+        remoteMouse.mouseUp(buttons);
+    }
+
+    public ScreenLocation getMouseLocation() {
+        return remoteMouse.getLocation();
     }
 
     public void type(String text) {

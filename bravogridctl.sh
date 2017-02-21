@@ -15,14 +15,14 @@ esac
 
 case "$OSTYPE" in
     msys*|mingw*|cygwin*)
-        echo "It's a docker toolbox, shell must be configured for docker"
+        #echo "It's a docker toolbox, shell must be configured for docker"
         export MSYS_NO_PATHCONV=1
         docker-machine start 1> /dev/null 2> /dev/null
         eval $(docker-machine env --shell bash 2> /dev/null)
         : ${GRID_HUB_IP:=$(docker-machine url | cut -d '/' -f 3 | cut -d ':' -f 1)}
         ;;
     *)
-        echo "With linux docker it is expected that shell is already configured for docker" ;;
+        ;;
 esac
 
 function run_chrome_containers {
