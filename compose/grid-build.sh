@@ -4,9 +4,17 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 #SCRIPT_NAME="$(basename "$(test -L "$0" && readlink "$0" || echo "$0")")"
 
 # ensure docker machine is running and configure current shell for docker
-export MSYS_NO_PATHCONV=1
-docker-machine start 2>/dev/null || true
-eval $(docker-machine env --shell bash || true)
+case "$OSTYPE" in
+    msys*|mingw*|cygwin*)
+		#It's a docker toolbox, shell must be configured for docker
+        export MSYS_NO_PATHCONV=1
+        docker-machine start 1> /dev/null 2> /dev/null
+        eval $(docker-machine env --shell bash 2> /dev/null)
+        ;;
+    *)
+        ;;
+esac
+
 echo Building compose file: "${SCRIPT_DIR}/docker-compose.yml"
 unset MSYS_NO_PATHCONV
 docker-compose -f "${SCRIPT_DIR}/docker-compose.yml" kill || true
