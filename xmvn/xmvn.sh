@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 #set -x
-umask 011
+umask 002
 /usr/bin/Xvfb $DISPLAY -ac -screen 0 1024x768x16 +extension RANDR 2> /dev/null &
 XVFB_PID=$!
 sleep 1
