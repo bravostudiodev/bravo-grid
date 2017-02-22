@@ -28,8 +28,8 @@ else
 fi
 
 #docker run --rm ${VOLUMES} -w /workspace bravo/xmvn:3.3.9 -B versions:set -DnewVersion=1.0
-echo "docker run --rm ${VOLUMES} -w /workspace bravo/xmvn:3.3.9 ${MVN_ARGS}"
-docker run --rm ${VOLUMES} -w /bravo-grid-workspace bravo/xmvn:3.3.9 ${MVN_ARGS}
+echo "docker run --rm -u root:$(id -g) ${VOLUMES} -w /bravo-grid-workspace bravo/xmvn:3.3.9 ${MVN_ARGS}"
+docker run --rm -u root:$(id -g) ${VOLUMES} -w /bravo-grid-workspace bravo/xmvn:3.3.9 ${MVN_ARGS}
 
 if [[ ${MVN_ARGS} == *"versions:set"* ]]; then
 	cp -af ${TEMPVOLUME}/* ./
