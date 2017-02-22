@@ -4,11 +4,10 @@ MAINTAINER IgorV
 ADD xmvn.sh /usr/bin/xmvn
 ADD docker-compose.sh /usr/bin/docker-compose
 RUN apk add --no-cache docker xvfb \
-    && chmod a+xr /usr/bin/xmvn /usr/bin/docker-compose
-    && mv $(which mvn) /usr/bin/mvn.real
+    && chmod a+xr /usr/bin/xmvn /usr/bin/docker-compose \
+    && mv $(which mvn) /usr/bin/mvn.real \
     && mv /usr/bin/xmvn /usr/bin/mvn
 ENV DISPLAY=:99.0
-RUN
 
 ENTRYPOINT ["mvn"]
 
