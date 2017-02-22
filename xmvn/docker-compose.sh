@@ -19,6 +19,7 @@ set -e
 VERSION="1.11.1"
 IMAGE="docker/compose:$VERSION"
 
+docker version || { echo >&2 "docker command is not available"; exit 1; }
 for cntId in $(docker ps -a -q); do
  cntHost=$(docker inspect -f '{{.Config.Hostname}}' ${cntId})
  #echo "${cntId} -> ${cntHost}"
