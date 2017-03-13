@@ -1,5 +1,5 @@
 # docker build -f hub/Dockerfile -t seleniumext/hub:custom .
-FROM selenium/hub:3.0.1-barium
+FROM selenium/hub:3.1.0-astatine
 MAINTAINER IgorV
 
 USER root

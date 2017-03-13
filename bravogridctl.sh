@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-GRID_VERSION=3.0.1-barium
+GRID_VERSION=3.1.0-astatine
 RUN_PREFIX=bravo_
 
 case "$1" in

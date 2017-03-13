@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.bravostudiodev.grid</groupId>
         <artifactId>bravo-grid</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.3-SNAPSHOT</version>
     </parent>
 
     <artifactId>deps-node</artifactId>
@@ -15,6 +15,27 @@
 
     <build>
         <plugins>
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <id>clean-before-compile</id>
+                        <phase>validate</phase>
+                        <goals><goal>clean</goal></goals>
+                        <configuration>
+                            <excludeDefaultDirectories>true</excludeDefaultDirectories>
+                            <filesets>
+                                <fileset>
+                                    <directory>${project.basedir}/../compose/node-ext</directory>
+                                    <includes><include>**/*</include></includes>
+                                    <followSymlinks>false</followSymlinks>
+                                </fileset>
+                            </filesets>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <!-- Copy Maven dependencies into project basedir -->
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>

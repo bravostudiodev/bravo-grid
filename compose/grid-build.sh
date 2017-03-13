@@ -23,11 +23,11 @@ docker-compose -f "${SCRIPT_DIR}/docker-compose.yml" build || exit 1
 EXIT_CODE=$?
 # docker rmi -f $(docker images -f dangling=true | awk '/none/ {print $3}') 2>/dev/null || true
 
-docker tag bravo/grid/hub           bravo/grid/hub:3.0.1-barium
-docker tag bravo/grid/chrome        bravo/grid/chrome:3.0.1-barium
-docker tag bravo/grid/chrome-debug  bravo/grid/chrome-debug:3.0.1-barium
-docker tag bravo/grid/firefox       bravo/grid/firefox:3.0.1-barium
-docker tag bravo/grid/firefox-debug bravo/grid/firefox-debug:3.0.1-barium
+docker tag bravo/grid/hub           bravo/grid/hub:3.1.0-astatine
+docker tag bravo/grid/chrome        bravo/grid/chrome:3.1.0-astatine
+docker tag bravo/grid/chrome-debug  bravo/grid/chrome-debug:3.1.0-astatine
+docker tag bravo/grid/firefox       bravo/grid/firefox:3.1.0-astatine
+docker tag bravo/grid/firefox-debug bravo/grid/firefox-debug:3.1.0-astatine
 
 docker tag bravo/grid/hub           bravo/grid/hub:latest
 docker tag bravo/grid/chrome        bravo/grid/chrome:latest
