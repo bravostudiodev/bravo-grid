@@ -9,7 +9,7 @@ case "$OSTYPE" in
         export MSYS_NO_PATHCONV=1
         docker-machine start 1> /dev/null 2> /dev/null
         eval $(docker-machine env --shell bash 2> /dev/null)
-		TEMPVOLUME="$(mount | grep $TEMP | sed -e 's/\([A-Z]\):\(.*\) on .*/\/\l\1\2/')/$(basename ${TEMPVOLUME})"
+		TEMPVOLUME="$(mount | grep ${TEMP} | sed -e 's/\([A-Z]\):\(.*\) on .*/\/\l\1\2/')/$(basename ${TEMPVOLUME})"
         ;;
     *)
         ;;

@@ -57,7 +57,7 @@ else
       VOLUMES="-v $(pwd):$(pwd)"
   fi
   if [ -n "$COMPOSE_FILE" ]; then
-      compose_dir=$(realpath $(dirname $COMPOSE_FILE))
+      compose_dir=$(realpath $(dirname ${COMPOSE_FILE}))
   fi
   # TODO: also check --file argument
   if [ -n "$compose_dir" ]; then
@@ -76,6 +76,5 @@ if [ -t 0 ]; then
   DOCKER_RUN_OPTIONS="$DOCKER_RUN_OPTIONS -i"
 fi
 
-#docker inspect $HOSTNAME
-echo exec docker run --rm $DOCKER_RUN_OPTIONS $DOCKER_ADDR $COMPOSE_OPTIONS $VOLUMES_FROM $VOLUMES -w "$(pwd)" $IMAGE "$@"
-exec docker run --rm $DOCKER_RUN_OPTIONS $DOCKER_ADDR $COMPOSE_OPTIONS $VOLUMES_FROM $VOLUMES -w "$(pwd)" $IMAGE "$@"
+echo exec docker run --rm ${DOCKER_RUN_OPTIONS} ${DOCKER_ADDR} ${COMPOSE_OPTIONS} ${VOLUMES_FROM} ${VOLUMES} -w "$(pwd)" ${IMAGE} "$@"
+exec docker run --rm ${DOCKER_RUN_OPTIONS} ${DOCKER_ADDR} ${COMPOSE_OPTIONS} ${VOLUMES_FROM} ${VOLUMES} -w "$(pwd)" ${IMAGE} "$@"

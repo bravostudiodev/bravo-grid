@@ -1,14 +1,14 @@
 #docker-compose up -d
 #docker-compose scale firefox=4 chrome=2
 #NOTE: context path is relative to this compose file
-version: '2'
+version: '2.0'
 
 services:
   hub:
     build:
       context: .
       dockerfile: ./Dockerfile.hub
-    image: bravo/grid/hub
+    image: "${PRIVATE_REGISTRY}bravo/grid/hub${GRID_VERSION}"
     ports:
       - 4444:4444
 
@@ -16,7 +16,7 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile.firefox
-    image: bravo/grid/firefox
+    image: "${PRIVATE_REGISTRY}bravo/grid/firefox${GRID_VERSION}"
     ports: # <port4VNC>:5900
       - 5900:5900
     volumes:
@@ -31,7 +31,7 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile.chrome
-    image: bravo/grid/chrome
+    image: "${PRIVATE_REGISTRY}bravo/grid/chrome${GRID_VERSION}"
     ports: # <port4VNC>:5900
       - 5901:5900
     volumes:
@@ -47,7 +47,7 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile.firefox-debug
-    image: bravo/grid/firefox-debug
+    image: "${PRIVATE_REGISTRY}bravo/grid/firefox-debug${GRID_VERSION}"
     ports: # <port4VNC>:5900
       - 5900:5900
     volumes:
@@ -62,7 +62,7 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile.chrome-debug
-    image: bravo/grid/chrome-debug
+    image: "${PRIVATE_REGISTRY}bravo/grid/chrome-debug${GRID_VERSION}"
     ports: # <port4VNC>:5900
       - 5901:5900
     volumes:

@@ -19,7 +19,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Answers;
 import org.mockito.Mock;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.openqa.grid.internal.Registry;
@@ -157,13 +156,10 @@ public class HubRequestsProxyingServletTest {
     }
 
     private Answer verifyRequestPath() {
-        return new Answer() {
-            @Override
-            public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
-                HttpServletRequest req = (HttpServletRequest) invocationOnMock.getArguments()[0];
-                assertThat(req.getPathInfo(), is("/proper/get/path/params"));
-                return null;
-            }
+        return invocationOnMock -> {
+            HttpServletRequest req = (HttpServletRequest) invocationOnMock.getArguments()[0];
+            assertThat(req.getPathInfo(), is("/proper/get/path/params"));
+            return null;
         };
     }
 
@@ -192,15 +188,12 @@ public class HubRequestsProxyingServletTest {
     }
 
     private Answer verifyRequestContent(final String contentType) {
-        return new Answer() {
-            @Override
-            public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
-                HttpServletRequest req = (HttpServletRequest) invocationOnMock.getArguments()[0];
-                assertThat(req.getContentType(), equalTo(contentType));
-                String reqContent = IOUtils.toString(req.getInputStream(), StandardCharsets.UTF_8);
-                assertThat(reqContent, is("expected_content"));
-                return null;
-            }
+        return invocationOnMock -> {
+            HttpServletRequest req = (HttpServletRequest) invocationOnMock.getArguments()[0];
+            assertThat(req.getContentType(), equalTo(contentType));
+            String reqContent = IOUtils.toString(req.getInputStream(), StandardCharsets.UTF_8);
+            assertThat(reqContent, is("expected_content"));
+            return null;
         };
     }
 
@@ -228,15 +221,12 @@ public class HubRequestsProxyingServletTest {
     }
 
     private Answer constructResponse(final String contentType) {
-        return new Answer() {
-            @Override
-            public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
-                HttpServletResponse resp = (HttpServletResponse) invocationOnMock.getArguments()[1];
-                resp.setStatus(HttpServletResponse.SC_CREATED);
-                resp.getOutputStream().write("expected_content".getBytes());
-                resp.setContentType(contentType);
-                return null;
-            }
+        return invocationOnMock -> {
+            HttpServletResponse resp = (HttpServletResponse) invocationOnMock.getArguments()[1];
+            resp.setStatus(HttpServletResponse.SC_CREATED);
+            resp.getOutputStream().write("expected_content".getBytes());
+            resp.setContentType(contentType);
+            return null;
         };
     }
 

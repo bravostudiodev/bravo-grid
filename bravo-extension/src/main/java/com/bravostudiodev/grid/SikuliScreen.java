@@ -57,6 +57,7 @@ public class SikuliScreen {
         return imageToBase64(primaryScreen.capture());
     }
 
+    @SuppressWarnings("unused")
     public String takeBase64Screenshot(ScreenRegion region) throws IOException {
         return imageToBase64(region.capture());
     }
@@ -145,6 +146,7 @@ public class SikuliScreen {
         remoteMouse.hover(primaryScreen.getCenter());
     }
 
+    @SuppressWarnings("unused")
     public void hover(int xOff, int yOff) {
         remoteMouse.hover(primaryScreen.getCenter().getRelativeScreenLocation(xOff, yOff));
     }
@@ -153,6 +155,7 @@ public class SikuliScreen {
         remoteMouse.hover(region.getCenter());
     }
 
+    @SuppressWarnings("unused")
     public void hover(ScreenRegion region, int xOff, int yOff) {
         remoteMouse.hover(region.getCenter().getRelativeScreenLocation(xOff, yOff));
     }
@@ -245,11 +248,13 @@ public class SikuliScreen {
         ImageTarget targetImg = images.get(targetName);
         if (null == targetImg) {
             ImageTarget targetImg1 = new ImageTarget(imageFromBase64(b64PNG));
+            //The basic function used by Sikuli is OpenCV's matchTemplate() feature. The images are internally converted to the RGB color model
+            // ignoring alpha channel. Meaning of similarity (between 0.0 and 1.0) is that some differences in pixel intensity/color are
+            // compensated, but below 0.8-0.9 might lead to false positives.
             targetImg1.setMinScore(0.8);
             images.put(targetName, targetImg1);
-            targetImg = targetImg1;
         }
-        return (null != targetImg);
+        return true;
     }
 
     public ScreenRegion find(String targetName) {

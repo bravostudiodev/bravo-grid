@@ -8,7 +8,6 @@ import com.google.common.collect.Sets;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.junit.Before;
 import org.junit.Test;
@@ -135,7 +134,7 @@ public class HubRequestsProxyingServletPathsTest {
         when(requestForwardingClientProvider.provide(anyString(), anyInt())).thenReturn(requestForwardingClient);
         when(httpClientProvider.provide()).thenReturn(closeableHttpClient);
 
-        when(closeableHttpClient.execute(Mockito.<HttpUriRequest>anyObject())).thenReturn(closeableHttpResponse);
+        when(closeableHttpClient.execute(Mockito.anyObject())).thenReturn(closeableHttpResponse);
 
         when(closeableHttpResponse.getStatusLine().getStatusCode()).thenReturn(200);
         when(closeableHttpResponse.getEntity()).thenReturn(entity);

@@ -71,8 +71,11 @@ public class FileTransferTest {
         if(currentFile.isDirectory()) {
             ZipEntry ze = new ZipEntry(entryName + "/"); // this only allows empty directories to be zipped, otherwise it could be skipped
             zos.putNextEntry(ze);
-            for (File file : currentFile.listFiles())
-                zipItem(topPath, topPath.relativize(file.toPath()), zos);
+            File[] zipFiles = currentFile.listFiles();
+            if(null != zipFiles) {
+                for (File file : zipFiles)
+                    zipItem(topPath, topPath.relativize(file.toPath()), zos);
+            }
         } else {
             ZipEntry ze = new ZipEntry(entryName);
             ze.setSize(currentFile.length());
