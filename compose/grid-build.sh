@@ -19,7 +19,8 @@ case "$OSTYPE" in
 esac
 
 echo Building compose file: "${SCRIPT_DIR}/docker-compose.yml"
-export PRIVATE_REGISTRY GRID_VERSION
+echo "PRIVATE_REGISTRY=${PRIVATE_REGISTRY}" > "${SCRIPT_DIR}/.env"
+echo "GRID_VERSION=${GRID_VERSION}" >> "${SCRIPT_DIR}/.env"
 unset MSYS_NO_PATHCONV
 docker-compose -f "${SCRIPT_DIR}/docker-compose.yml" kill || true
 docker-compose -f "${SCRIPT_DIR}/docker-compose.yml" rm -f || true

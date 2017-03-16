@@ -22,3 +22,4 @@ buildNumber.properties
 
 compose/hub-ext
 compose/node-ext
+/compose/.env
