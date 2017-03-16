@@ -22,9 +22,10 @@ echo Building compose file: "${SCRIPT_DIR}/docker-compose.yml"
 echo "PRIVATE_REGISTRY=${PRIVATE_REGISTRY}" > "${SCRIPT_DIR}/.env"
 echo "GRID_VERSION=${GRID_VERSION}" >> "${SCRIPT_DIR}/.env"
 unset MSYS_NO_PATHCONV
-docker-compose -f "${SCRIPT_DIR}/docker-compose.yml" kill || true
-docker-compose -f "${SCRIPT_DIR}/docker-compose.yml" rm -f || true
-docker-compose -f "${SCRIPT_DIR}/docker-compose.yml" build || exit 1
+pushd "${SCRIPT_DIR}"
+docker-compose kill || true
+docker-compose rm -f || true
+docker-compose build || exit 1
 EXIT_CODE=$?
 # docker rmi -f $(docker images -f dangling=true | awk '/none/ {print $3}') 2>/dev/null || true
 
