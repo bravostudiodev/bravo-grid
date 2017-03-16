@@ -1,6 +1,6 @@
 # docker build -f node-chrome-debug/Dockerfile -t seleniumext/node-chrome-debug:custom .
 FROM selenium/node-chrome-debug:3.1.0-astatine
-MAINTAINER IgorV
+MAINTAINER IgorV <gorvin@users.noreply.github.com>
 
 USER root
 
@@ -11,7 +11,7 @@ RUN sed -i 's@-jar /opt/selenium/selenium-server-standalone.jar@-cp "/opt/seleni
  && sed -i 's@\\"registerCycle\\": $NODE_REGISTER_CYCLE@\\"registerCycle\\": $NODE_REGISTER_CYCLE,\n  \\"servlets\\": [\n    \\"com.bravostudiodev.grid.BravoExtensionServlet\\"\n  ]@' \
     /opt/selenium/generate_config
 
-ADD node-ext/ /opt/selenium/ext/
+COPY node-ext/ /opt/selenium/ext/
 
 RUN chown -R seluser:seluser /opt/selenium/
 
@@ -43,7 +43,7 @@ RUN chown -R seluser:seluser /opt/selenium/
 # && rm -r /var/lib/apt/lists/* \
 # && sed -i 's/^fluxbox/idesk \&\nfluxbox/' /opt/bin/entry_point.sh
 # 
-#ADD idesk/ /root/
+#COPY idesk/ /root/
 
 
 #Continue as root because of problems with VNC server execution as seluser

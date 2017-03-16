@@ -1,6 +1,6 @@
 # docker build -f hub/Dockerfile -t seleniumext/hub:custom .
 FROM selenium/hub:3.1.0-astatine
-MAINTAINER IgorV
+MAINTAINER IgorV <gorvin@users.noreply.github.com>
 
 USER root
 
@@ -11,7 +11,7 @@ RUN sed -i 's@-jar /opt/selenium/selenium-server-standalone.jar@-cp "/opt/seleni
  && sed -i 's@org.openqa.grid.internal.utils.DefaultCapabilityMatcher@com.bravostudiodev.grid.CustomCapabilityMatcher@' \
     /opt/selenium/generate_config /opt/selenium/config.json
 
-ADD hub-ext/ /opt/selenium/ext/
+COPY hub-ext/ /opt/selenium/ext/
 
 RUN chown -R seluser:seluser /opt/selenium/
 
