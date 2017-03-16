@@ -41,27 +41,27 @@ import static org.mockito.Mockito.when;
 public class HubRequestsProxyingServletPathsTest {
 
     @Mock
-    HttpServletRequest req;
+    private HttpServletRequest req;
     @Mock
-    HttpServletResponse resp;
+    private HttpServletResponse resp;
     @Mock
-    Registry registry;
+    private Registry registry;
 
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
-    TestSession activeSession1;
+    private TestSession activeSession1;
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
-    TestSession activeSession2;
+    private TestSession activeSession2;
 
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
-    HttpClientProvider httpClientProvider;
+    private HttpClientProvider httpClientProvider;
     @Mock
-    RequestForwardingClientProvider requestForwardingClientProvider;
+    private RequestForwardingClientProvider requestForwardingClientProvider;
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
-    CloseableHttpClient closeableHttpClient;
+    private CloseableHttpClient closeableHttpClient;
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
-    CloseableHttpResponse closeableHttpResponse;
+    private CloseableHttpResponse closeableHttpResponse;
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
-    HttpEntity entity;
+    private HttpEntity entity;
 
     private HubRequestsProxyingServlet servlet;
 
