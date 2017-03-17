@@ -24,13 +24,13 @@ import static org.mockito.Mockito.when;
 public class SeleniumSessionsTest {
 
     @Mock
-    Registry registry;
+    private Registry registry;
     @Mock
-    ExternalSessionKey externalSessionKey;
+    private ExternalSessionKey externalSessionKey;
 
-    TestSession activeSession;
+    private TestSession activeSession;
 
-    SeleniumSessions seleniumSessions;
+    private SeleniumSessions seleniumSessions;
 
     @Before
     public void setUp() {
@@ -92,6 +92,4 @@ public class SeleniumSessionsTest {
         assertTrue(inactivityTime == 0);
         assertTrue("Inactivity time should be 0 when timeout is ignored", inactivityTime == inactivityTimeAfterRefresh);
     }
-
-
 }

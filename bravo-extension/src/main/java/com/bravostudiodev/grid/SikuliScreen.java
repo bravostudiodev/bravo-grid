@@ -257,10 +257,16 @@ public class SikuliScreen {
         return true;
     }
 
+    public class UnknownImageTarget extends RuntimeException {
+        UnknownImageTarget(String msg) {
+            super(msg);
+        }
+    }
+
     public ScreenRegion find(String targetName) {
         ImageTarget targetImg = images.get(targetName);
         if (null == targetImg)
-            throw new RuntimeException("Unkown target name " + targetName + ", not added with addTarget method");
+            throw new UnknownImageTarget("Unkown target name " + targetName + ", not added with addTarget method");
         try {
             return primaryScreen.find(targetImg);
         } catch (Exception e) {
@@ -272,7 +278,7 @@ public class SikuliScreen {
     public List<ScreenRegion> findAll(String targetName) {
         ImageTarget targetImg = images.get(targetName);
         if (null == targetImg)
-            throw new RuntimeException("Unkown target name " + targetName + ", not added with addTarget method");
+            throw new UnknownImageTarget("Unkown target name " + targetName + ", not added with addTarget method");
         try {
             return primaryScreen.findAll(targetImg);
         } catch (Exception e) {

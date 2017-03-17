@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-SCRIPT_DIR="$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
-SCRIPT_NAME="$(basename "$(test -L "$0" && readlink "$0" || echo "$0")")"
+#SCRIPT_DIR="$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
+#SCRIPT_NAME="$(basename "$(test -L "$0" && readlink "$0" || echo "$0")")"
 TEMPVOLUME="$(mktemp -d)"
 case "$OSTYPE" in
     msys*|mingw*|cygwin*)

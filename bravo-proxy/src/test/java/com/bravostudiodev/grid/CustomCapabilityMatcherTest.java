@@ -38,7 +38,7 @@ public class CustomCapabilityMatcherTest {
     }
 
     @Test
-    public void shouldReturnFalseWithDefaultCapabilitiesNotMatch_2() {
+    public void shouldReturnFalseWithDefaultCapabilitiesNotMatch2() {
         Map<String, Object> nodeCapabilities = nodeCapabilities();
 
         Map<String, Object> requestedCapabilities = requestedCapabilities();

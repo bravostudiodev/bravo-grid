@@ -16,9 +16,6 @@ import java.util.zip.ZipInputStream;
 public class FileTransfer {
     private static final Logger LOGGER = Logger.getLogger(SikuliScreen.class.getName());
 
-    public FileTransfer() {
-    }
-
     public String readFile(String filePath) throws IOException {
         LOGGER.info("Reading file " + filePath);
         try (InputStream isFile = new FileInputStream(filePath);

@@ -30,10 +30,10 @@ public class CustomCapabilityMatcher extends DefaultCapabilityMatcher {
 
     private boolean extensionCapabilityCheck(Map<String, Object> nodeCapability, Map<String, Object> requestedCapability) {
         for (String capability : requestedCapability.keySet()) {
-            if (capability.startsWith(Capabilities.EXTENSION_PREFIX)) {
-                if (!requestedCapability.get(capability).equals(nodeCapability.get(capability))) {
-                    return false;
-                }
+            if (!capability.startsWith(Capabilities.EXTENSION_PREFIX))
+                continue;
+            if (!requestedCapability.get(capability).equals(nodeCapability.get(capability))) {
+                return false;
             }
         }
         return true;

@@ -75,7 +75,7 @@ public class HubRequestsProxyingServletPathsTest {
 
         @Override
         public void setWriteListener(WriteListener writeListener) {
-            throw new RuntimeException("Not implemented");
+            assert false : "Not implemented";
         }
 
         @Override
@@ -103,7 +103,7 @@ public class HubRequestsProxyingServletPathsTest {
 
         @Override
         public void setReadListener(ReadListener readListener) {
-            throw new RuntimeException("Not implemented");
+            assert false : "Not implemented";
         }
 
         @Override
@@ -172,7 +172,7 @@ public class HubRequestsProxyingServletPathsTest {
     }
 
     @Test
-    public void doGetWithInvalidSessionIdInPath_2() throws ServletException, IOException {
+    public void doGetWithInvalidSessionIdInPath2() throws ServletException, IOException {
         when(req.getPathInfo()).thenReturn("/session/");
         servlet.doGet(req, resp);
 
@@ -180,7 +180,7 @@ public class HubRequestsProxyingServletPathsTest {
     }
 
     @Test
-    public void doGetWithInvalidSessionIdInPath_3() throws ServletException, IOException {
+    public void doGetWithInvalidSessionIdInPath3() throws ServletException, IOException {
         when(req.getPathInfo()).thenReturn("/8fba10d9-e2e4-498d-a192-555314658ab6/");
         servlet.doGet(req, resp);
 

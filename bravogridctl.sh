@@ -28,7 +28,7 @@ esac
 
 function run_chrome_containers {
      for i in $(seq 0 $(($1-1))); do
-        port=$((6000+$i))
+        port=$((6000+i))
         echo starting chrome container with port 5900 mapped to ${port}
         docker run -d -p ${port}:5900 -v /dev/shm:/dev/shm -v /dev/urandom:/dev/random --name ${RUN_PREFIX}chrome${i} -e HUB_PORT_4444_TCP_ADDR=${HUB_IP} -e HUB_PORT_4444_TCP_PORT=4444 \
          -e NODE_MAX_INSTANCES=1 -e NODE_MAX_SESSION=1 ${PRIVATE_REGISTRY}bravo/grid/chrome${SUFIX}${GRID_VERSION} || exit 1
@@ -37,7 +37,7 @@ function run_chrome_containers {
 
 function run_firefox_containers {
      for i in $(seq 0 $(($1-1))); do
-        port=$((7000+$i))
+        port=$((7000+i))
         echo starting firefox container with port 5900 mapped to ${port}
         docker run -d -p ${port}:5900 -v /dev/urandom:/dev/random --name ${RUN_PREFIX}firefox${i} -e HUB_PORT_4444_TCP_ADDR=${HUB_IP} -e HUB_PORT_4444_TCP_PORT=4444 \
          -e NODE_MAX_INSTANCES=1 -e NODE_MAX_SESSION=1 ${PRIVATE_REGISTRY}bravo/grid/firefox${SUFIX}${GRID_VERSION} || exit 1
