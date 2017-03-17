@@ -258,7 +258,7 @@ public class SikuliScreen {
     }
 
     public class UnknownImageTarget extends RuntimeException {
-        UnknownImageTarget(String msg) {
+        public UnknownImageTarget(String msg) {
             super(msg);
         }
     }

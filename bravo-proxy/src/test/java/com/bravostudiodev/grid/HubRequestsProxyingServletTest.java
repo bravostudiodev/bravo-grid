@@ -91,6 +91,7 @@ public class HubRequestsProxyingServletTest {
         stubServer.stop();
     }
 
+    @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     @Test
     public void shouldRedirectGetRequestAndTrimPathParams() throws IOException {
         doAnswer(verifyRequestPath())
@@ -107,6 +108,7 @@ public class HubRequestsProxyingServletTest {
         verify(mockedFunction, times(1)).apply(any(HttpServletRequest.class), any(HttpServletResponse.class));
     }
 
+    @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     @Test
     public void shouldRedirectPostRequestAndTrimPathParams() throws IOException {
         doAnswer(verifyRequestPath())
@@ -123,6 +125,7 @@ public class HubRequestsProxyingServletTest {
         verify(mockedFunction, times(1)).apply(any(HttpServletRequest.class), any(HttpServletResponse.class));
     }
 
+    @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     @Test
     public void shouldRedirectPutRequestAndTrimPathParams() throws IOException {
         doAnswer(verifyRequestPath())
@@ -139,6 +142,7 @@ public class HubRequestsProxyingServletTest {
         verify(mockedFunction, times(1)).apply(any(HttpServletRequest.class), any(HttpServletResponse.class));
     }
 
+    @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     @Test
     public void shouldRedirectDeleteRequestAndTrimPathParams() throws IOException {
         doAnswer(verifyRequestPath())
@@ -163,6 +167,7 @@ public class HubRequestsProxyingServletTest {
         };
     }
 
+    @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     @Test
     public void shouldRedirectPostRequestWithSameContents() throws IOException {
         doAnswer(verifyRequestContent(MediaType.OCTET_STREAM.toString()))

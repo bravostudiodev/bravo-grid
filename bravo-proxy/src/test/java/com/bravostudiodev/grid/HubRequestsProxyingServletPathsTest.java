@@ -163,6 +163,7 @@ public class HubRequestsProxyingServletPathsTest {
         assertThat(httpServletResponseOutputStream.toString(), is("valid stream"));
     }
 
+    @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     @Test
     public void doGetWithInvalidSessionIdInPath() throws ServletException, IOException {
         when(req.getPathInfo()).thenReturn("/session");
@@ -171,6 +172,7 @@ public class HubRequestsProxyingServletPathsTest {
         verify(resp).sendError(eq(HttpServletResponse.SC_BAD_REQUEST), anyString());
     }
 
+    @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     @Test
     public void doGetWithInvalidSessionIdInPath2() throws ServletException, IOException {
         when(req.getPathInfo()).thenReturn("/session/");
@@ -179,6 +181,7 @@ public class HubRequestsProxyingServletPathsTest {
         verify(resp).sendError(eq(HttpServletResponse.SC_BAD_REQUEST), anyString());
     }
 
+    @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     @Test
     public void doGetWithInvalidSessionIdInPath3() throws ServletException, IOException {
         when(req.getPathInfo()).thenReturn("/8fba10d9-e2e4-498d-a192-555314658ab6/");
