@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
+: ${CONTAINER_PREFIX:="bravo_"}
 : ${PRIVATE_REGISTRY:="192.168.6.17/"}
 : ${GRID_VERSION:=":1.2-SNAPSHOT"}
-RUN_PREFIX=bravo_
 
 case "$1" in
     start|stop)
