@@ -6,8 +6,10 @@ USER root
 
 RUN sed -i 's@-jar /opt/selenium/selenium-server-standalone.jar@-cp "/opt/selenium/selenium-server-standalone.jar:/opt/selenium/ext/*" org.openqa.grid.selenium.GridLauncherV3@' \
     /opt/bin/entry_point.sh \
- && sed -i 's@\\"prioritizer\\": null,@\\"prioritizer\\": null,\n  \\"servlets\\": [\n    \\"com.bravostudiodev.grid.HubRequestsProxyingServlet\\"\n  ],@' \
-    /opt/selenium/generate_config /opt/selenium/config.json \
+ && sed -i 's@{@{\n  \\"servlets\\": [\n    \\"com.bravostudiodev.grid.HubRequestsProxyingServlet\\"\n  ],@' \
+    /opt/selenium/generate_config \
+ && sed -i 's@{@{\n  \"servlets\": [\n    \"com.bravostudiodev.grid.HubRequestsProxyingServlet\"\n  ],@' \
+    /opt/selenium/config.json \
  && sed -i 's@org.openqa.grid.internal.utils.DefaultCapabilityMatcher@com.bravostudiodev.grid.CustomCapabilityMatcher@' \
     /opt/selenium/generate_config /opt/selenium/config.json
 
