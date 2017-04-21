@@ -1,0 +1,16 @@
+
+pushd bravo-grid
+docker-selenium images update
+./set-grid-version.sh 3.3.1-cesium 1.2-SNAPSHOT
+mvn install
+popd
+
+pushd hodor/core
+set gridversion to 1.2-SNAPSHOT
+mvn install
+popd
+
+pushd hodor/it-run
+set gridversion to 1.2-SNAPSHOT
+mvn verify
+popd

@@ -18,7 +18,7 @@ esac
 docker build -t bravo/xmvn:3.3.9 ./xmvn
 
 chmod a+rwx ${TEMPVOLUME}
-cp -a ./bravo-*/ ./deps-*/ ./compose/ ./pom.xml ${TEMPVOLUME}/
+cp -a ./bravo-*/ ./deps-*/ ./compose/ ./xmvn/ ./pom.xml ./checkstyle-checks.xml ${TEMPVOLUME}/
 M2VOLUME="$(echo ~)/.m2"
 VOLUMES="-v ${TEMPVOLUME}:/bravo-grid-workspace -v ${M2VOLUME}:/root/.m2 -v /var/run/docker.sock:/var/run/docker.sock"
 
