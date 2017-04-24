@@ -74,5 +74,12 @@
             <artifactId>bravo-extension</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!--NOTE: Dependency on bravo-proxy in nodes normally should be needed but due to the bug: https://github.com/SeleniumHQ/selenium/issues/3268,
+        this dependency must exist to prevent node configuration to fallback to default, see bug: https://github.com/jenkinsci/selenium-plugin/issues/104-->
+        <dependency>
+            <groupId>com.bravostudiodev.grid</groupId>
+            <artifactId>bravo-proxy</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 </project>

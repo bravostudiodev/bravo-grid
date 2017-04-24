@@ -70,9 +70,10 @@ public class RequestForwardingClient {
 
     private HttpRequestBase createPostRequest(HttpServletRequest request) throws IOException {
         HttpPost httpPost = new HttpPost();
-        InputStreamEntity entity = new InputStreamEntity(request.getInputStream(),
-                request.getContentLength(),
-                ContentType.create(request.getContentType()));
+        String reqContentType = request.getContentType();
+        LOGGER.info("Posting request with content-type: " + reqContentType);
+        InputStreamEntity entity = new InputStreamEntity(request.getInputStream(), request.getContentLength(),
+                (null != reqContentType) ? ContentType.create(reqContentType) : null);
         httpPost.setEntity(entity);
 
         return httpPost;

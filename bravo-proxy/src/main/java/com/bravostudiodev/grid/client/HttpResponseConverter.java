@@ -33,8 +33,12 @@ public final class HttpResponseConverter {
 
         Header contentType = entity.getContentType();
         if (contentType != null) {
-            target.setContentType(contentType.getValue());
-            LOGGER.info("Response from extension returned " + contentType.getValue() + " content type");
+            if(null == contentType.getValue()) {
+                LOGGER.warning("Response from extension returned null content type - it will not be copied to target servlet response.");
+            } else {
+                target.setContentType(contentType.getValue());
+                LOGGER.info("Response from extension returned " + contentType.getValue() + " content type");
+            }
         }
 
         long contentLength = entity.getContentLength();
