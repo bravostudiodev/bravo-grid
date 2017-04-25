@@ -73,7 +73,7 @@ public class RequestForwardingClient {
         String reqContentType = request.getContentType();
         LOGGER.info("Posting request with content-type: " + reqContentType);
         InputStreamEntity entity = new InputStreamEntity(request.getInputStream(), request.getContentLength(),
-                (null != reqContentType) ? ContentType.create(reqContentType) : null);
+                (null != reqContentType) ? ContentType.getByMimeType(reqContentType) : null);
         httpPost.setEntity(entity);
 
         return httpPost;
