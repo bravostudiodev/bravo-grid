@@ -4,7 +4,19 @@ MAINTAINER IgorV <gorvin@users.noreply.github.com>
 
 USER root
 
-RUN sed -i 's@-jar /opt/selenium/selenium-server-standalone.jar@-cp "/opt/selenium/selenium-server-standalone.jar:/opt/selenium/ext/*" org.openqa.grid.selenium.GridLauncherV3@' \
+#==================
+# Chrome webdriver
+#==================
+ARG CHROME_DRIVER_VERSION=2.29
+RUN wget --no-verbose -O /tmp/chromedriver_linux64.zip https://chromedriver.storage.googleapis.com/$CHROME_DRIVER_VERSION/chromedriver_linux64.zip \
+  && rm -rf /opt/selenium/chromedriver* \
+  && unzip /tmp/chromedriver_linux64.zip -d /opt/selenium \
+  && rm /tmp/chromedriver_linux64.zip \
+  && mv /opt/selenium/chromedriver /opt/selenium/chromedriver-$CHROME_DRIVER_VERSION \
+  && chmod 755 /opt/selenium/chromedriver-$CHROME_DRIVER_VERSION \
+  && ln -fs /opt/selenium/chromedriver-$CHROME_DRIVER_VERSION /usr/bin/chromedriver
+
+RUN sed -i 's@-jar /opt/selenium/selenium-server-standalone.jar@-cp "/opt/selenium/ext/*" org.openqa.grid.selenium.GridLauncherV3@' \
     /opt/bin/entry_point.sh \
  && sed -i 's@\\"seleniumProtocol\\": \\"WebDriver\\"@\\"seleniumProtocol\\": \\"WebDriver\\",\n      \\"extension.bravoCapability\\": true@' \
     /opt/selenium/generate_config \
@@ -13,7 +25,8 @@ RUN sed -i 's@-jar /opt/selenium/selenium-server-standalone.jar@-cp "/opt/seleni
 
 COPY node-ext/ /opt/selenium/ext/
 
-RUN chown -R seluser:seluser /opt/selenium/
+RUN chown -R seluser:seluser /opt/selenium/ \
+ && rm /opt/selenium/selenium-server-standalone.jar
 
 #RUN sed -i 's/main universe$/main universe multiverse/' /etc/apt/sources.list \
 # && mkdir -p /var/lib/update-notifier/package-data-downloads/partial/ \

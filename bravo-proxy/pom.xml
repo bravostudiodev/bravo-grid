@@ -17,12 +17,15 @@
     </description>
 
     <dependencies>
+        <dependency> <!-- force dependency on latest version of guava-->
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>21.0</version>
+        </dependency>
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-server</artifactId>
-            <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
