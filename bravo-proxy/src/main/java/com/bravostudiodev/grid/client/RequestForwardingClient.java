@@ -70,10 +70,13 @@ public class RequestForwardingClient {
 
     private HttpRequestBase createPostRequest(HttpServletRequest request) throws IOException {
         HttpPost httpPost = new HttpPost();
-        String reqContentType = request.getContentType();
-        LOGGER.info("Posting request with content-type: " + reqContentType);
-        InputStreamEntity entity = new InputStreamEntity(request.getInputStream(), request.getContentLength(),
-                (null != reqContentType) ? ContentType.getByMimeType(reqContentType) : null);
+        String strContentType = request.getContentType();
+        LOGGER.info("Posting request with mime-type: " + strContentType);
+        ContentType contentType = ContentType.getByMimeType(strContentType);
+        if(null == contentType)
+            contentType = ContentType.APPLICATION_OCTET_STREAM;
+        LOGGER.info("Posting request with mime-type " + strContentType + " handled as: " + contentType);
+        InputStreamEntity entity = new InputStreamEntity(request.getInputStream(), request.getContentLength(), contentType);
         httpPost.setEntity(entity);
 
         return httpPost;
