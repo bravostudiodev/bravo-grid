@@ -1,5 +1,5 @@
 # docker build -f hub/Dockerfile -t seleniumext/hub:custom .
-FROM selenium/hub:3.3.1-cesium
+FROM selenium/hub:3.4.0-chromium
 MAINTAINER IgorV <gorvin@users.noreply.github.com>
 
 USER root

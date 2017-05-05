@@ -1,5 +1,5 @@
 # docker build -f node-chrome-debug/Dockerfile -t seleniumext/node-chrome-debug:custom .
-FROM selenium/node-chrome-debug:3.3.1-cesium
+FROM selenium/node-chrome-debug:3.4.0-chromium
 MAINTAINER IgorV <gorvin@users.noreply.github.com>
 
 USER root
