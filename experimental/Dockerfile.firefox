@@ -16,10 +16,7 @@ RUN apt-get update -qqy \
     && tar -C /opt -xjf /tmp/firefox.tar.bz2 \
     && rm /tmp/firefox.tar.bz2 \
     && mv /opt/firefox /opt/firefox-${FIREFOX_VERSION} \
-    && ln -fs /opt/firefox-${FIREFOX_VERSION}/firefox /usr/bin/firefox \
-    && echo NODE_BROWSER_VERSION="$(firefox -version | cut -d " " -f 3)" >> /etc/environment \
-    && echo NODE_BROWSER_NAME="firefox" >> /etc/environment \
-ENV DBUS_SESSION_BUS_ADDRESS=/dev/null
+    && ln -fs /opt/firefox-${FIREFOX_VERSION}/firefox /usr/bin/firefox
 
 #============
 # GeckoDriver
@@ -34,7 +31,11 @@ RUN wget --no-verbose -O /tmp/geckodriver.tar.gz https://github.com/mozilla/geck
   && chmod 755 /opt/geckodriver-${GECKODRIVER_VERSION} \
   && ln -fs /opt/geckodriver-${GECKODRIVER_VERSION} /usr/bin/geckodriver
 
+RUN echo export NODE_BROWSER_VERSION="$(firefox -version | cut -d " " -f 3)">> ${APP_HOME}/.noderc \
+    && echo export NODE_BROWSER_NAME="firefox">> ${APP_HOME}/.noderc
+ENV DBUS_SESSION_BUS_ADDRESS=/dev/null
+
 USER ${APP_USER}
-COPY node-ext/ "${HOME}/selenium/"
-COPY entry_node.sh "${HOME}/entry_point.sh"
-ENTRYPOINT ["${HOME}/entry_point.sh"]
+COPY node-ext/ "${APP_HOME}/selenium/"
+COPY entry_node.sh "${APP_HOME}/entry_point.sh"
+ENTRYPOINT "${APP_HOME}/entry_point.sh"

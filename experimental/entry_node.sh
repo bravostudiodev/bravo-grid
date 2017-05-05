@@ -3,6 +3,8 @@
 #run with
 # docker run --expose=4444 ...
 
+source ${APP_HOME}/.noderc
+
 if [ -z "$HUB_PORT_4444_TCP_ADDR" ]; then
   echo Not linked with a running Hub container 1>&2
   exit 1
@@ -19,7 +21,7 @@ fi
 
 CONF=${HOME}/selenium/config.json
 
-cat <<_EOF
+cat > ${CONF} <<_EOF
 {
     "capabilities": [ {
         "version": "${NODE_BROWSER_VERSION}",

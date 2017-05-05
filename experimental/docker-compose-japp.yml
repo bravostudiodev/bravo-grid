@@ -1,0 +1,20 @@
+# docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock \
+#  -v /usr/bin/docker:/usr/bin/docker -v ~/work/hodor-all/bravo-grid/experimental:/apprun -w /apprun \
+#  docker/compose:1.13.0 -f docker-compose-japp.yml build
+#NOTE: context path is relative to this compose file
+version: '2.0'
+
+services:
+  japp:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.japp
+    image: "bravo/japp:1.0"
+
+  jappx:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.jappx
+    image: "bravo/jappx:1.0"
+    depends_on:
+      - japp

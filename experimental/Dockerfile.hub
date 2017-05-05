@@ -2,6 +2,6 @@ FROM bravo/japp:1.0
 LABEL authors="IgorV <gorvin@users.noreply.github.com>"
 
 EXPOSE 4444
-COPY hub-ext/ "${HOME}/selenium/"
-COPY entry_hub.sh "${HOME}/entry_point.sh"
-ENTRYPOINT ["${HOME}/entry_point.sh"]
+COPY hub-ext/ "${APP_HOME}/selenium/"
+COPY entry_hub.sh "${APP_HOME}/entry_point.sh"
+ENTRYPOINT "${APP_HOME}/entry_point.sh"

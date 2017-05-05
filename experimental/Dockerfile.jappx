@@ -38,9 +38,9 @@ RUN echo "deb http://archive.ubuntu.com/ubuntu xenial main universe\n" > /etc/ap
 USER ${APP_USER}
 
 # Minimal configuration
-ADD http://xpra.org/xorg.conf /home/${APP_USER}/xorg.conf
-COPY idesk/ /home/${APP_USER}/
-RUN touch /home/${APP_USER}/.Xmodmap
+ADD http://xpra.org/xorg.conf ${APP_HOME}/xorg.conf
+COPY idesk/ ${APP_HOME}/
+RUN touch ${APP_HOME}/.Xmodmap
 
 ENV DISPLAY=":100.0" \
     SCREEN_WIDTH=1360 \

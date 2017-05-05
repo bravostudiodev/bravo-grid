@@ -50,15 +50,16 @@ RUN apt-get update -qqy \
         -i ./usr/lib/jvm/java-8-openjdk-amd64/jre/lib/security/java.security
 
 ARG APP_USER=app
-ENV APP_USER=${APP_USER}
+ENV APP_USER=${APP_USER} \
+    APP_HOME="/home/${APP_USER}"
 
 # Add app user
-RUN adduser --disabled-password --uid 899 --home /home/${APP_USER} --gecos '' ${APP_USER} \
+RUN adduser --disabled-password --uid 899 --home ${APP_HOME} --gecos '' ${APP_USER} \
     && adduser ${APP_USER} sudo \
     && passwd -d ${APP_USER}
 #    && echo "${APP_USER}:app" | chpasswd
 
-WORKDIR /home/${APP_USER}
+WORKDIR ${APP_HOME}
 ENV SSHD_PORT=22
 
 # Configure non-root sshd server
