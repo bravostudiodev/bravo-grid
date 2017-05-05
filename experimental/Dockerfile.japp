@@ -1,0 +1,102 @@
+FROM ubuntu:16.04
+LABEL authors="IgorV <gorvin@users.noreply.github.com>"
+
+#======================================================================================
+# Minimal runtime with configured locale, timezone, passwordless sudo and non-root user
+#======================================================================================
+
+ENV DEBIAN_FRONTEND=noninteractive \
+    DEBCONF_NONINTERACTIVE_SEEN=true
+
+RUN apt-get update -qqy \
+    && apt-get install -qqy --no-install-recommends apt-utils \
+    && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
+
+# Locale
+RUN apt-get update -qqy \
+    && apt-get install -qqy --no-install-recommends \
+        language-pack-en \
+        locales \
+    && rm -rf /var/lib/apt/lists/* /var/cache/apt/* \
+    && locale-gen --purge "en_US.UTF-8" \
+    && update-locale LANG="en_US.UTF-8" LANGUAGE="en_US:en" LC_ALL="en_US.UTF-8" \
+    && dpkg-reconfigure --frontend noninteractive locales
+
+ENV LANG="en_US.UTF-8" \
+    LANGUAGE="en_US:en" \
+    LC_ALL="en_US.UTF-8" \
+    TZ="UTC"
+
+# Timezone
+RUN apt-get update -qqy \
+    && apt-get install -qqy --no-install-recommends tzdata \
+    && rm -rf /var/lib/apt/lists/* /var/cache/apt/* \
+    && echo "${TZ}" > /etc/timezone \
+    && dpkg-reconfigure --frontend noninteractive tzdata
+
+# Common tools
+RUN apt-get update -qqy \
+    && apt-get install -qqy --no-install-recommends \
+        bzip2 \
+        curl \
+        ca-certificates \
+        psmisc \
+        openjdk-8-jre-headless \
+        openssh-server \
+        unzip \
+        wget \
+    && rm -rf /var/lib/apt/lists/* /var/cache/apt/* \
+    && sed -e 's/securerandom\.source=file:\/dev\/random/securerandom\.source=file:\/dev\/urandom/' \
+        -i ./usr/lib/jvm/java-8-openjdk-amd64/jre/lib/security/java.security
+
+ARG APP_USER=app
+ENV APP_USER=${APP_USER}
+
+# Add app user
+RUN adduser --disabled-password --uid 899 --home /home/${APP_USER} --gecos '' ${APP_USER} \
+    && adduser ${APP_USER} sudo \
+    && passwd -d ${APP_USER}
+#    && echo "${APP_USER}:app" | chpasswd
+
+WORKDIR /home/${APP_USER}
+ENV SSHD_PORT=22
+
+# Configure non-root sshd server
+USER ${APP_USER}
+RUN cp /etc/ssh/sshd_config ./ \
+	&& sed -e "s/^#\?UsePrivilegeSeparation .*$/UsePrivilegeSeparation no/" \
+        -e "s/^#\?LogLevel .*$/LogLevel DEBUG/" \
+        -e "s/^#\?StrictModes .*$/StrictModes no/" \
+        -e "s/^#\?PasswordAuthentication .*$/PasswordAuthentication yes/" \
+        -e "s/^#\?PermitEmptyPasswords .*$/PermitEmptyPasswords yes/" \
+        -e "s/^#\?Port .*$/Port ${SSHD_PORT}/" \
+        -e "s|^#\?PidFile .*$|PidFile /home/${APP_USER}/sshd.pid|" \
+        -e "s/^#\?UsePAM .*$/UsePAM no/" \
+        -i ./sshd_config
+EXPOSE ${SSHD_PORT}
+
+ENTRYPOINT ["/usr/sbin/sshd", "-f", "sshd_config", "-D", "-e"]
+# docker rm -f $(docker ps -a -q); docker build -t bravo/japp:1.0 -f Dockerfile.japp .;
+# Test:
+#docker run -d --name sshtest bravo/japp:1.0
+#ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no app@$(docker inspect -f "{{.NetworkSettings.IPAddress}}" sshtest) pwd 2>/dev/null | grep "/home/app" > /dev/null && echo OK || echo ERROR
+#docker rm -f sshtest
+
+# ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no app@$(docker inspect -f "{{.NetworkSettings.IPAddress}}" sshtest)
+
+# https://unix.stackexchange.com/questions/256625/need-the-sshd-server-be-run-in-root-privilege-for-a-password-less-login
+#     -D	     When this option is specified, sshd will not detach and does not
+#	     become a daemon.  This allows easy	monitoring of sshd.
+#
+#     -d	     Debug mode.  The server sends verbose debug output	to standard
+#	     error, and	does not put itself in the background.	The server
+#	     also will not fork	and will only process one connection.  This
+#	     option is only intended for debugging for the server.  Multiple
+#	     -d	options	increase the debugging level.  Maximum is 3.
+#
+#     -E	log_file
+#	     Append debug logs to log_file instead of the system log.
+#
+#     -e	     Write debug logs to standard error	instead	of the system log.
+
+#ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -p 2200 app@172.17.0.2

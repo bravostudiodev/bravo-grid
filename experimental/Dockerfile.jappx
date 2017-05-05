@@ -1,0 +1,66 @@
+FROM bravo/japp:1.0
+LABEL authors="IgorV <gorvin@users.noreply.github.com>"
+
+# xpra and xorg-video-dummy with dependencies
+USER root
+RUN echo "deb http://archive.ubuntu.com/ubuntu xenial main universe\n" > /etc/apt/sources.list \
+    && echo "deb http://archive.ubuntu.com/ubuntu xenial-updates main universe\n" >> /etc/apt/sources.list \
+    && echo "deb http://security.ubuntu.com/ubuntu xenial-security main universe\n" >> /etc/apt/sources.list \
+    && echo "deb http://winswitch.org/ xenial main" > /etc/apt/sources.list.d/winswitch.list \
+    && curl http://winswitch.org/gpg.asc | apt-key add - \
+    && apt-get update -qqy \
+    && apt-get -qqy --no-install-recommends install \
+        dbus-x11 \
+        fluxbox \
+        fonts-ipafont-gothic \
+        hicolor-icon-theme \
+        idesk \
+        lxterminal \
+        mesa-utils \
+        python-dbus \
+        python-lzo \
+        python-opengl \
+        python-rencode \
+        rox-filer \
+        x11-apps \
+        x11-utils \
+        xauth \
+        xfonts-100dpi \
+        xfonts-75dpi \
+        xfonts-cyrillic \
+        xfonts-scalable \
+        xpra \
+        xserver-xorg-video-dummy \
+        xterm \
+    && rm -rf /var/lib/apt/lists/* /var/cache/apt/* \
+    && sed -e "s|/lxterminal|/lxterminal -l|" -i /etc/X11/fluxbox/fluxbox-menu \
+    && sed -e "s/^#\? \?idesk\(.*\)$/idesk \1/" -i $(which startfluxbox)
+USER ${APP_USER}
+
+# Minimal configuration
+ADD http://xpra.org/xorg.conf /home/${APP_USER}/xorg.conf
+COPY idesk/ /home/${APP_USER}/
+RUN touch /home/${APP_USER}/.Xmodmap
+
+ENV DISPLAY=":100.0" \
+    SCREEN_WIDTH=1360 \
+    SCREEN_HEIGHT=1020
+
+#ENV SCREEN_DEPTH=24 \
+#    GEOMETRY="${SCREEN_WIDTH}x${SCREEN_HEIGHT}x${SCREEN_DEPTH}"
+
+# docker rm -f $(docker ps -a -q); docker build -t bravo/jappx:1.0 -f Dockerfile.jappx .;
+# Test:
+#docker run -d --name sshtest bravo/jappx:1.0
+#ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no app@$(docker inspect -f "{{.NetworkSettings.IPAddress}}" sshtest) pwd 2>/dev/null | grep "/home/app" > /dev/null && echo OK || echo ERROR
+#docker rm -f sshtest
+
+# In container:
+# Test1: xpra --no-daemon --no-mdns --no-pulseaudio start :100 --start-child=glxgears
+# Test2: xpra --no-daemon --no-mdns --no-pulseaudio --xvfb="Xorg -dpi 96 -noreset -nolisten tcp +extension GLX +extension RANDR +extension RENDER -logfile /home/app/.xpra/Xvfb-10.log -config /home/app/xorg.conf" start :100 --start-child=glxgears
+# Test3: XPRA_INITENV_COMMAND="xpra initenv" xpra --no-daemon --no-mdns --no-pulseaudio --xvfb="Xorg -dpi 96 -noreset -nolisten tcp -logfile /home/app/.xpra/Xvfb-10.log -config /home/app/xorg.conf" start-desktop :100 --exit-with-child --start-child=startfluxbox
+# From host one of:
+# xpra --ssh="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -p 2200" attach ssh:app@172.17.0.2
+# xpra --ssh="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" attach ssh:app@172.17.0.2
+
+# docker rm -f $(docker ps -a -q); docker build -t sshtest .; docker run -d --name sshtest sshtest

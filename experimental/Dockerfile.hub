@@ -1,0 +1,7 @@
+FROM bravo/japp:1.0
+LABEL authors="IgorV <gorvin@users.noreply.github.com>"
+
+EXPOSE 4444
+COPY hub-ext/ "${HOME}/selenium/"
+COPY entry_hub.sh "${HOME}/entry_point.sh"
+ENTRYPOINT ["${HOME}/entry_point.sh"]

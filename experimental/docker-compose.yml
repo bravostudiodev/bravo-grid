@@ -1,0 +1,79 @@
+#https://hub.docker.com/r/docker/compose/tags/
+# export CHSCALE=2 FFSCALE=4
+# echo "PRIVATE_REGISTRY=192.168.6.17" > ".env"
+# echo "SUM_OF_CHSCALE_AND_FFSCALE=$((CHSCALE+FFSCALE))" >> ".env"
+# echo "GRID_VERSION=${GRID_VERSION}" >> ".env"
+# docker run --rm -it docker/compose:1.13.0 up -d --scale firefox=${FFSCALE} --scale chrome=${CHSCALE}
+
+#Or in versions <1.13 use scale command after starting services
+# docker run --rm -it docker/compose:1.11.1 up -d
+# docker run --rm -it docker/compose:1.11.1 scale firefox=4 chrome=2
+#NOTE: context path is relative to this compose file
+version: '2.0'
+
+services:
+  japp:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.japp
+    image: "bravo/japp:1.0"
+
+  jappx:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.jappx
+    image: "bravo/jappx:1.0"
+    depends_on:
+      - japp
+
+  hub:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.hub
+    image: "${PRIVATE_REGISTRY}bravo/japphub${GRID_VERSION}"
+    expose:
+      - "4444"
+    ports:
+      - "4444:4444"
+    depends_on:
+      - japp
+    environment:
+      - GRID_MAX_SESSIONS=${SUM_OF_CHSCALE_AND_FFSCALE}
+
+  chrome:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.chrome
+    image: "${PRIVATE_REGISTRY}bravo/jappchrome${GRID_VERSION}"
+    ports:
+      - "20122:22"
+    volumes:
+      - "/dev/urandom:/dev/random"
+      - "/dev/shm:/dev/shm"
+    depends_on:
+      - jappx
+      - hub
+    environment:
+      - HUB_PORT_4444_TCP_ADDR=hub
+      - HUB_PORT_4444_TCP_PORT=4444
+      - NODE_MAX_INSTANCES=1
+      - NODE_MAX_SESSION=1
+      #- HTTP_PROXY=http://192.168.0.18:8081/
+
+  firefox:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.firefox
+    image: "${PRIVATE_REGISTRY}bravo/jappfirefox${GRID_VERSION}"
+    ports:
+      - "20222:22"
+    volumes:
+      - "/dev/urandom:/dev/random"
+    depends_on:
+      - jappx
+      - hub
+    environment:
+      - HUB_PORT_4444_TCP_ADDR=hub
+      - HUB_PORT_4444_TCP_PORT=4444
+      - NODE_MAX_INSTANCES=1
+      - NODE_MAX_SESSION=1
