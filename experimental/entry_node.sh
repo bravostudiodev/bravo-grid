@@ -52,7 +52,8 @@ echo "SE_OPTS=${SE_OPTS}"
 function shutdownhandler {
     echo "shutting down node.."
     kill -s SIGTERM ${SSHD_PID}
-    killall startfluxbox
+#    killall startfluxbox
+    killall openbox-session
     kill -s SIGTERM ${NODE_PID}
 
     wait ${SSHD_PID}
@@ -69,13 +70,14 @@ java ${JAVA_OPTS} -cp "${HOME}/selenium/*" org.openqa.grid.selenium.GridLauncher
 NODE_PID=$!
 
 rm -f /tmp/.X*lock
-
+sed -e "s|Virtual 1360 1020|Virtual ${SCREEN_WIDTH} ${SCREEN_HEIGHT}|" -i "${HOME}/xorg.conf"
 XORG_COMMAND="Xorg -dpi 96 -noreset -nolisten tcp +extension GLX +extension RANDR +extension RENDER -logfile ${HOME}/XpraXorg-10.log -config ${HOME}/xorg.conf"
 XPRA_INITENV_COMMAND="xpra initenv" xpra --no-daemon --no-mdns --no-pulseaudio --xvfb="${XORG_COMMAND}" \
-    start-desktop ${DISPLAY} --exit-with-child --start-child=startfluxbox&
+    start-desktop ${DISPLAY} --exit-with-child --start-child=openbox-session&
+#    start-desktop ${DISPLAY} --exit-with-child --start-child=startfluxbox&
 XPRA_PID=$!
 
-xrandr --output default --mode "${SCREEN_WIDTH}${SCREEN_HEIGHT}"
+#xrandr --output default --mode "${SCREEN_WIDTH}x${SCREEN_HEIGHT}"
 
 /usr/sbin/sshd -f sshd_config -D -e &
 SSHD_PID=$!
@@ -84,6 +86,7 @@ trap shutdownhandler SIGTERM SIGINT
 wait ${NODE_PID}
 
 kill -s SIGTERM ${SSHD_PID}
-killall startfluxbox
+#killall startfluxbox
+killall openbox-session
 wait ${SSHD_PID}
 wait ${XPRA_PID}

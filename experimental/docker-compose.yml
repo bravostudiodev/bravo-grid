@@ -27,7 +27,7 @@ services:
       - "4444:4444"
     environment:
       - GRID_MAX_SESSIONS=${SUM_OF_CHSCALE_AND_FFSCALE}
-
+#https://github.com/jessfraz/dockerfiles/blob/master/chrome/stable/Dockerfile
   chrome:
     build:
       context: .
@@ -40,6 +40,8 @@ services:
       - "/dev/shm:/dev/shm"
     depends_on:
       - hub
+#    security_opt:
+#      - seccomp:./seccomp-chrome.json
     environment:
       - HUB_PORT_4444_TCP_ADDR=hub
       - HUB_PORT_4444_TCP_PORT=4444

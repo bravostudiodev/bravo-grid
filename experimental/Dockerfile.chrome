@@ -35,10 +35,18 @@ RUN wget --no-verbose -O /tmp/chromedriver_linux64.zip https://chromedriver.stor
     && ln -fs /opt/selenium/chromedriver-${CHROME_DRIVER_VERSION} /usr/bin/chromedriver
 
 RUN echo export NODE_BROWSER_VERSION="$(dpkg -s google-chrome-stable | grep Version | cut -d " " -f 2 | cut -d "-" -f 1 )">> ${APP_HOME}/.noderc \
-    && echo export NODE_BROWSER_NAME="chrome">> ${APP_HOME}/.noderc
-ENV DBUS_SESSION_BUS_ADDRESS=/dev/null
+    && echo export NODE_BROWSER_NAME="chrome">> ${APP_HOME}/.noderc \
+    && echo "#!/usr/bin/env bash\n/usr/bin/google-chrome --no-sandbox"> /usr/bin/google-chrome-no-sandbox \
+    && chmod +x /usr/bin/google-chrome-no-sandbox \
+    && update-alternatives --remove x-www-browser /usr/bin/google-chrome-stable \
+    && update-alternatives --install /usr/bin/x-www-browser x-www-browser /usr/bin/google-chrome-no-sandbox 40
+#     \
+#    && sed -e "s|/^\([submenu] (Applications) {}\)$|/[exec] (Google Chrome) {/opt/google/chrome/google-chrome --no-sandbox} </opt/google/chrome/product_logo_32.xpm>\n\1|" -i /etc/X11/fluxbox/fluxbox-menu \
+#    && sed -e "s|/google-chrome|/google-chrome --no-sandbox|" -i /etc/X11/fluxbox/fluxbox-menu
+#ENV DBUS_SESSION_BUS_ADDRESS=/dev/null
 
 USER ${APP_USER}
 COPY node-ext/ "${APP_HOME}/selenium/"
 COPY entry_node.sh "${APP_HOME}/entry_point.sh"
+
 ENTRYPOINT "${APP_HOME}/entry_point.sh"

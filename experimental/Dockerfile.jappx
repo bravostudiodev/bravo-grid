@@ -11,19 +11,25 @@ RUN echo "deb http://archive.ubuntu.com/ubuntu xenial main universe\n" > /etc/ap
     && apt-get update -qqy \
     && apt-get -qqy --no-install-recommends install \
         dbus-x11 \
-        fluxbox \
+#        fluxbox \
         fonts-ipafont-gothic \
-        hicolor-icon-theme \
-        idesk \
-        lxterminal \
+#        hicolor-icon-theme \
+#        idesk \
+        libfreetype6 \
+        libfontconfig \
+#        lxterminal \
         mesa-utils \
+        openbox \
+#        obconf \
+#        menu \
         python-dbus \
         python-lzo \
         python-opengl \
         python-rencode \
-        rox-filer \
-        x11-apps \
-        x11-utils \
+#        rox-filer \
+#        ttf-ubuntu-font-family \
+#        x11-apps \
+#        x11-utils \
         xauth \
         xfonts-100dpi \
         xfonts-75dpi \
@@ -32,19 +38,24 @@ RUN echo "deb http://archive.ubuntu.com/ubuntu xenial main universe\n" > /etc/ap
         xpra \
         xserver-xorg-video-dummy \
         xterm \
-    && rm -rf /var/lib/apt/lists/* /var/cache/apt/* \
-    && sed -e "s|/lxterminal|/lxterminal -l|" -i /etc/X11/fluxbox/fluxbox-menu \
-    && sed -e "s/^#\? \?idesk\(.*\)$/idesk \1/" -i $(which startfluxbox)
+    && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
+#    && sed -e "s|/lxterminal|/lxterminal -l|" -i /etc/X11/fluxbox/fluxbox-menu \
+#    && sed -e "s/^#\? \?idesk\(.*\)$/idesk \1/" -i $(which startfluxbox)
 USER ${APP_USER}
-
-# Minimal configuration
-ADD http://xpra.org/xorg.conf ${APP_HOME}/xorg.conf
-COPY idesk/ ${APP_HOME}/
-RUN touch ${APP_HOME}/.Xmodmap
 
 ENV DISPLAY=":100.0" \
     SCREEN_WIDTH=1360 \
     SCREEN_HEIGHT=1020
+
+# Minimal Xorg configuration
+#ADD http://xpra.org/xorg.conf ${APP_HOME}/xorg.conf
+COPY xorg.conf ${APP_HOME}/
+#COPY idesk/ ${APP_HOME}/
+RUN touch ${APP_HOME}/.Xmodmap
+
+# \
+#    && mkdir -p "${APP_HOME}/.config/openbox" \
+#    && echo "idesk&" >> "${APP_HOME}/.config/openbox/autostart"
 
 #ENV SCREEN_DEPTH=24 \
 #    GEOMETRY="${SCREEN_WIDTH}x${SCREEN_HEIGHT}x${SCREEN_DEPTH}"
