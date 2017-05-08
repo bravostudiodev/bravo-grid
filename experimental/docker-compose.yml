@@ -1,6 +1,5 @@
-# docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock \
-#  -v /usr/bin/docker:/usr/bin/docker -v ~/work/hodor-all/bravo-grid/experimental:/apprun -w /apprun \
-#  docker/compose:1.13.0 build
+#docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock -v /usr/bin/docker:/usr/bin/docker \
+# -v $PWD:/apprun -w /apprun docker/compose:1.13.0 build
 
 #https://hub.docker.com/r/docker/compose/tags/
 # export CHSCALE=2 FFSCALE=4

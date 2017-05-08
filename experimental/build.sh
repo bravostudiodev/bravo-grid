@@ -23,11 +23,12 @@ echo "PRIVATE_REGISTRY=${PRIVATE_REGISTRY}" > "${SCRIPT_DIR}/.env"
 echo "GRID_VERSION=${GRID_VERSION}" >> "${SCRIPT_DIR}/.env"
 unset MSYS_NO_PATHCONV
 pushd "${SCRIPT_DIR}"
-${SCRIPT_DIR}/../xmvn/docker-compose.sh kill || true
-${SCRIPT_DIR}/../xmvn/docker-compose.sh rm -f || true
+DOCKE_COMPOSE="docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock -v /usr/bin/docker:/usr/bin/docker \
+ -v $PWD:/apprun -w /apprun docker/compose:1.13.0"
+${DOCKE_COMPOSE} -f docker-compose-japp.yml build || exit 1
 mvn -f deps-hub.pom generate-resources || exit 1
 mvn -f deps-node.pom generate-resources || exit 1
-${SCRIPT_DIR}/../xmvn/docker-compose.sh build || exit 1
+${DOCKE_COMPOSE} build || exit 1
 EXIT_CODE=$?
 # docker rmi -f $(docker images -f dangling=true | awk '/none/ {print $3}') 2>/dev/null || true
 

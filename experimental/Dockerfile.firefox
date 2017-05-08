@@ -35,9 +35,6 @@ RUN wget --no-verbose -O /tmp/geckodriver.tar.gz https://github.com/mozilla/geck
 RUN echo export NODE_BROWSER_VERSION="$(firefox -version | cut -d " " -f 3)">> ${APP_HOME}/.noderc \
     && echo export NODE_BROWSER_NAME="firefox">> ${APP_HOME}/.noderc \
     && update-alternatives --install /usr/bin/x-www-browser x-www-browser /usr/bin/firefox 40
-#     \
-#    && sed -e "s|/^\([submenu] (Applications) {}\)$|/[exec] (Firefox) {/usr/bin/firefox} </opt/firefox/browser/chrome/icons/default/default48.png>\n\1|" -i /etc/X11/fluxbox/fluxbox-menu
-#ENV DBUS_SESSION_BUS_ADDRESS=/dev/null
 
 USER ${APP_USER}
 COPY node-ext/ "${APP_HOME}/selenium/"
