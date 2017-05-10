@@ -54,7 +54,7 @@ ENV DISPLAY=":100.0" \
 COPY xorg.conf ${APP_HOME}/
 #COPY idesk/ ${APP_HOME}/
 RUN touch ${APP_HOME}/.Xmodmap \
-    touch ${APP_HOME}/.Xauthority
+    && touch ${APP_HOME}/.Xauthority
 
 # \
 #    && mkdir -p "${APP_HOME}/.config/openbox" \

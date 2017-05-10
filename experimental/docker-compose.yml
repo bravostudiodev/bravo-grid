@@ -26,7 +26,9 @@ services:
       - "4444:4444"
     environment:
       - GRID_MAX_SESSIONS=${SUM_OF_CHSCALE_AND_FFSCALE}
-#https://github.com/jessfraz/dockerfiles/blob/master/chrome/stable/Dockerfile
+      - GRID_DEBUG=false
+
+  #https://github.com/jessfraz/dockerfiles/blob/master/chrome/stable/Dockerfile
   chrome:
     build:
       context: .
@@ -46,6 +48,7 @@ services:
       - HUB_PORT_4444_TCP_PORT=4444
       - NODE_MAX_INSTANCES=1
       - NODE_MAX_SESSION=1
+      - NODE_NDEBUG=true
       #- HTTP_PROXY=http://192.168.0.18:8081/
 
   firefox:
@@ -64,3 +67,4 @@ services:
       - HUB_PORT_4444_TCP_PORT=4444
       - NODE_MAX_INSTANCES=1
       - NODE_MAX_SESSION=1
+      - NODE_NDEBUG=true

@@ -2,7 +2,7 @@ FROM ubuntu:16.04
 LABEL authors="IgorV <gorvin@users.noreply.github.com>"
 
 #======================================================================================
-# Minimal runtime with configured locale, timezone, passwordless sudo and non-root user
+# Minimal runtime with configured locale, timezone and non-root user
 #======================================================================================
 
 ENV DEBIAN_FRONTEND=noninteractive \

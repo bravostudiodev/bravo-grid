@@ -34,6 +34,7 @@ RUN wget --no-verbose -O /tmp/chromedriver_linux64.zip https://chromedriver.stor
     && chmod 755 /opt/selenium/chromedriver-${CHROME_DRIVER_VERSION} \
     && ln -fs /opt/selenium/chromedriver-${CHROME_DRIVER_VERSION} /usr/bin/chromedriver
 
+# script to be loaded in entry_node.sh and chrome start script with --no-sandbox flag
 RUN echo export NODE_BROWSER_VERSION="$(dpkg -s google-chrome-stable | grep Version | cut -d " " -f 2 | cut -d "-" -f 1 )">> ${APP_HOME}/.noderc \
     && echo export NODE_BROWSER_NAME="chrome">> ${APP_HOME}/.noderc \
     && echo "#!/usr/bin/env bash\n/usr/bin/google-chrome --no-sandbox"> /usr/bin/google-chrome-no-sandbox \
@@ -43,10 +44,9 @@ RUN echo export NODE_BROWSER_VERSION="$(dpkg -s google-chrome-stable | grep Vers
 #     \
 #    && sed -e "s|/^\([submenu] (Applications) {}\)$|/[exec] (Google Chrome) {/opt/google/chrome/google-chrome --no-sandbox} </opt/google/chrome/product_logo_32.xpm>\n\1|" -i /etc/X11/fluxbox/fluxbox-menu \
 #    && sed -e "s|/google-chrome|/google-chrome --no-sandbox|" -i /etc/X11/fluxbox/fluxbox-menu
-#ENV DBUS_SESSION_BUS_ADDRESS=/dev/null
 
 USER ${APP_USER}
 COPY node-ext/ "${APP_HOME}/selenium/"
-COPY entry_node.sh "${APP_HOME}/entry_point.sh"
+COPY entry_node.sh "${APP_HOME}/"
 
-ENTRYPOINT "${APP_HOME}/entry_point.sh"
+ENTRYPOINT "${APP_HOME}/entry_node.sh"
