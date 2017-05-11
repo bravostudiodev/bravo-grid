@@ -11,43 +11,53 @@ RUN echo "deb http://archive.ubuntu.com/ubuntu xenial main universe\n" > /etc/ap
     && apt-get update -qqy \
     && apt-get -qqy --no-install-recommends install \
         dbus-x11 \
-#        fluxbox \
+        fluxbox \
         fonts-ipafont-gothic \
 #        hicolor-icon-theme \
 #        idesk \
 #        libfreetype6 \
 #        libfontconfig \
 #        lxterminal \
-#        mesa-utils \
+        mesa-utils \
 #        openbox \
 #        obconf \
 #        menu \
         python-dbus \
         python-lzo \
-#        python-opengl \
+        python-opengl \
         python-rencode \
 #        rox-filer \
 #        ttf-ubuntu-font-family \
-#        x11-apps \
+        x11-apps \
 #        x11-utils \
         xauth \
         xfonts-100dpi \
         xfonts-75dpi \
         xfonts-cyrillic \
         xfonts-scalable \
-        xpra \
-        xserver-xorg-video-dummy \
         xinit \
+        xpra \
+        xserver-xorg-input-void \
+        xserver-xorg-video-dummy \
         xterm \
     && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
 #    && sed -e "s|/lxterminal|/lxterminal -l|" -i /etc/X11/fluxbox/fluxbox-menu \
 #    && sed -e "s/^#\? \?idesk\(.*\)$/idesk \1/" -i $(which startfluxbox)
+
+RUN mkdir -p /tmp/.X11-unix \
+    && chmod -R +rwx /tmp/.X11-unix \
+    && mkdir -p /run/dbus \
+    && chmod -R +rwx /run/dbus
+#     \
+#    && /usr/bin/dbus-uuidgen --ensure
+
 USER ${APP_USER}
 
 ENV DISPLAY=":100.0" \
     SCREEN_WIDTH=1360 \
-    SCREEN_HEIGHT=1020 \
-    DBUS_SESSION_BUS_ADDRESS="/dev/null"
+    SCREEN_HEIGHT=1020
+#     \
+#    DBUS_SESSION_BUS_ADDRESS="/dev/null"
 
 # Minimal Xorg configuration
 #ADD http://xpra.org/xorg.conf ${APP_HOME}/xorg.conf
@@ -55,13 +65,10 @@ COPY xorg.conf ${APP_HOME}/
 #COPY idesk/ ${APP_HOME}/
 RUN touch ${APP_HOME}/.Xmodmap \
     && touch ${APP_HOME}/.Xauthority
-
 # \
 #    && mkdir -p "${APP_HOME}/.config/openbox" \
 #    && echo "idesk&" >> "${APP_HOME}/.config/openbox/autostart"
 
-#ENV SCREEN_DEPTH=24 \
-#    GEOMETRY="${SCREEN_WIDTH}x${SCREEN_HEIGHT}x${SCREEN_DEPTH}"
 
 # docker rm -f $(docker ps -a -q); docker build -t bravo/jappx:1.0 -f Dockerfile.jappx .;
 # Test:

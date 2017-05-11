@@ -42,7 +42,6 @@ RUN apt-get update -qqy \
         ca-certificates \
         psmisc \
         openjdk-8-jre-headless \
-        openssh-server \
         unzip \
         wget \
     && rm -rf /var/lib/apt/lists/* /var/cache/apt/* \
@@ -60,23 +59,30 @@ RUN adduser --disabled-password --uid 899 --home ${APP_HOME} --gecos '' ${APP_US
 #    && echo "${APP_USER}:app" | chpasswd
 
 WORKDIR ${APP_HOME}
-ENV SSHD_PORT=22
 
-# Configure non-root sshd server
+## sshd
+#RUN apt-get update -qqy \
+#    && apt-get install -qqy --no-install-recommends \
+#        openssh-server \
+#    && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
+#
+#ENV SSHD_PORT=22
+#
 USER ${APP_USER}
-RUN cp /etc/ssh/sshd_config ./ \
-	&& sed -e "s/^#\?UsePrivilegeSeparation .*$/UsePrivilegeSeparation no/" \
-        -e "s/^#\?LogLevel .*$/LogLevel DEBUG/" \
-        -e "s/^#\?StrictModes .*$/StrictModes no/" \
-        -e "s/^#\?PasswordAuthentication .*$/PasswordAuthentication yes/" \
-        -e "s/^#\?PermitEmptyPasswords .*$/PermitEmptyPasswords yes/" \
-        -e "s/^#\?Port .*$/Port ${SSHD_PORT}/" \
-        -e "s|^#\?PidFile .*$|PidFile /home/${APP_USER}/sshd.pid|" \
-        -e "s/^#\?UsePAM .*$/UsePAM no/" \
-        -i ./sshd_config
-EXPOSE ${SSHD_PORT}
+## Configure non-root sshd server
+#RUN cp /etc/ssh/sshd_config ./ \
+#	&& sed -e "s/^#\?UsePrivilegeSeparation .*$/UsePrivilegeSeparation no/" \
+#        -e "s/^#\?LogLevel .*$/LogLevel DEBUG/" \
+#        -e "s/^#\?StrictModes .*$/StrictModes no/" \
+#        -e "s/^#\?PasswordAuthentication .*$/PasswordAuthentication yes/" \
+#        -e "s/^#\?PermitEmptyPasswords .*$/PermitEmptyPasswords yes/" \
+#        -e "s/^#\?Port .*$/Port ${SSHD_PORT}/" \
+#        -e "s|^#\?PidFile .*$|PidFile /home/${APP_USER}/sshd.pid|" \
+#        -e "s/^#\?UsePAM .*$/UsePAM no/" \
+#        -i ./sshd_config
+#EXPOSE ${SSHD_PORT}
+#ENTRYPOINT ["/usr/sbin/sshd", "-f", "sshd_config", "-D", "-e"]
 
-ENTRYPOINT ["/usr/sbin/sshd", "-f", "sshd_config", "-D", "-e"]
 # docker rm -f $(docker ps -a -q); docker build -t bravo/japp:1.0 -f Dockerfile.japp .;
 # Test:
 #docker run -d --name sshtest bravo/japp:1.0

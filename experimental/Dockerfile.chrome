@@ -34,19 +34,45 @@ RUN wget --no-verbose -O /tmp/chromedriver_linux64.zip https://chromedriver.stor
     && chmod 755 /opt/selenium/chromedriver-${CHROME_DRIVER_VERSION} \
     && ln -fs /opt/selenium/chromedriver-${CHROME_DRIVER_VERSION} /usr/bin/chromedriver
 
+ENV XPRA_TCP_PORT=10100
+
 # script to be loaded in entry_node.sh and chrome start script with --no-sandbox flag
-RUN echo export NODE_BROWSER_VERSION="$(dpkg -s google-chrome-stable | grep Version | cut -d " " -f 2 | cut -d "-" -f 1 )">> ${APP_HOME}/.noderc \
+RUN echo export NODE_BROWSER_VERSION="$(dpkg -s google-chrome-stable | grep Version | cut -d " " -f 2 | cut -d "-" -f 1)">> ${APP_HOME}/.noderc \
     && echo export NODE_BROWSER_NAME="chrome">> ${APP_HOME}/.noderc \
-    && echo "#!/usr/bin/env bash\n/usr/bin/google-chrome --no-sandbox"> /usr/bin/google-chrome-no-sandbox \
+    && echo export NODE_XPRA_TCP_PORT="${XPRA_TCP_PORT}" \
+    && mv /usr/bin/google-chrome /usr/bin/google-chrome-with-sandbox \
+    && echo '#!/usr/bin/env bash\necho $0 $@>>google-chrome.log\nexec -a "$0" "/usr/bin/google-chrome-with-sandbox" --no-sandbox "$@" 2>&1 | tee ~/google-chrome-exec.log'> /usr/bin/google-chrome-no-sandbox \
     && chmod +x /usr/bin/google-chrome-no-sandbox \
-    && update-alternatives --remove x-www-browser /usr/bin/google-chrome-stable \
-    && update-alternatives --install /usr/bin/x-www-browser x-www-browser /usr/bin/google-chrome-no-sandbox 40
+    && ln -s /usr/bin/google-chrome-no-sandbox /usr/bin/google-chrome \
+    && mv /opt/google/chrome/google-chrome /opt/google/chrome/google-chrome-with-sandbox \
+    && echo '#!/usr/bin/env bash\necho $0 $@>>google-chrome-opt.log\nexec -a "$0" "$0-with-sandbox" --no-sandbox "$@" 2>&1 | tee ~/google-chrome-opt-exec.log '> /opt/google/chrome/google-chrome \
+    && chmod +x /opt/google/chrome/google-chrome
 #     \
 #    && sed -e "s|/^\([submenu] (Applications) {}\)$|/[exec] (Google Chrome) {/opt/google/chrome/google-chrome --no-sandbox} </opt/google/chrome/product_logo_32.xpm>\n\1|" -i /etc/X11/fluxbox/fluxbox-menu \
 #    && sed -e "s|/google-chrome|/google-chrome --no-sandbox|" -i /etc/X11/fluxbox/fluxbox-menu
+     #\
+#    && update-alternatives --install /usr/bin/gnome-www-browser gnome-www-browser /usr/bin/google-chrome-no-sandbox 40 \
+#    && update-alternatives --install /usr/bin/google-chrome google-chrome /usr/bin/google-chrome-no-sandbox 40 \
+#    && update-alternatives --install /usr/bin/x-www-browser x-www-browser /usr/bin/google-chrome-no-sandbox 40 \
+#    && update-alternatives --set gnome-www-browser /usr/bin/google-chrome-no-sandbox \
+#    && update-alternatives --set google-chrome /usr/bin/google-chrome-no-sandbox \
+#    && update-alternatives --set x-www-browser /usr/bin/google-chrome-no-sandbox
+
+EXPOSE ${XPRA_TCP_PORT}
+
+#RUN apt-get update -qqy \
+#    && apt-get -qqy --no-install-recommends install xserver-xephyr \
+#    && rm -rf /var/lib/apt/lists/* /var/cache/apt/* \
+#    && apt autoremove -y
+
+RUN apt autoremove -y
 
 USER ${APP_USER}
 COPY node-ext/ "${APP_HOME}/selenium/"
 COPY entry_node.sh "${APP_HOME}/"
+RUN chown -R ${APP_USER}:${APP_USER} ./*
 
 ENTRYPOINT "${APP_HOME}/entry_node.sh"
+#xpra --ssh="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -p 20122" attach ssh:app@localhost
+#docker run --rm -e HUB_PORT_4444_TCP_ADDR=172.0.17.2 -e HUB_PORT_4444_TCP_PORT=4444 -it --entrypoint /bin/bash 192.168.6.17/bravo/jappchrome:1.4-SNAPSHOT
+#xpra attach tcp:$(docker inspect -f "{{.NetworkSettings.IPAddress}}" apprun_chrome_1) --desktop-scaling=off

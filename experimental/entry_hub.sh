@@ -12,7 +12,7 @@
 : ${GRID_TIMEOUT:=30} # In seconds, maps to "timeout"
 : ${GRID_DEBUG:=false} # Debug
 
-CONF=${HOME}/selenium/config.json
+CONF=${HOME}/config_hub.json
 cat >${CONF} <<_EOF
 {
     "host": null,
@@ -21,7 +21,7 @@ cat >${CONF} <<_EOF
     "maxSession": ${GRID_MAX_SESSION},
     "newSessionWaitTimeout": ${GRID_NEW_SESSION_WAIT_TIMEOUT},
     "capabilityMatcher": "com.bravostudiodev.grid.CustomCapabilityMatcher",
-    "sevlets": [
+    "servlets": [
         "com.bravostudiodev.grid.HubRequestsProxyingServlet"
     ],
     "throwOnCapabilityNotPresent": ${GRID_THROW_ON_CAPABILITY_NOT_PRESENT},

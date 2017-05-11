@@ -32,13 +32,27 @@ RUN wget --no-verbose -O /tmp/geckodriver.tar.gz https://github.com/mozilla/geck
   && chmod 755 /opt/geckodriver-${GECKODRIVER_VERSION} \
   && ln -fs /opt/geckodriver-${GECKODRIVER_VERSION} /usr/bin/geckodriver
 
+ENV XPRA_TCP_PORT=10200
+
 # script to be loaded in entry_node.sh
 RUN echo export NODE_BROWSER_VERSION="$(firefox -version | cut -d " " -f 3)">> ${APP_HOME}/.noderc \
     && echo export NODE_BROWSER_NAME="firefox">> ${APP_HOME}/.noderc \
+    && echo export NODE_XPRA_TCP_PORT="${XPRA_TCP_PORT}" \
     && update-alternatives --install /usr/bin/x-www-browser x-www-browser /usr/bin/firefox 40
+
+EXPOSE ${XPRA_TCP_PORT}
+
+#RUN apt-get update -qqy \
+#    && apt-get -qqy --no-install-recommends install xserver-xephyr \
+#    && rm -rf /var/lib/apt/lists/* /var/cache/apt/* \
+#    && apt autoremove -y
+
+RUN apt autoremove -y
 
 USER ${APP_USER}
 COPY node-ext/ "${APP_HOME}/selenium/"
 COPY entry_node.sh "${APP_HOME}/"
+RUN chown -R ${APP_USER}:${APP_USER} ./*
 
 ENTRYPOINT "${APP_HOME}/entry_node.sh"
+# xpra --ssh="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -p 202doc22" attach ssh:app@localhost
