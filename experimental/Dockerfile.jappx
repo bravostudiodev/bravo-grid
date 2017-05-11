@@ -13,23 +13,12 @@ RUN echo "deb http://archive.ubuntu.com/ubuntu xenial main universe\n" > /etc/ap
         dbus-x11 \
         fluxbox \
         fonts-ipafont-gothic \
-#        hicolor-icon-theme \
-#        idesk \
-#        libfreetype6 \
-#        libfontconfig \
-#        lxterminal \
         mesa-utils \
-#        openbox \
-#        obconf \
-#        menu \
         python-dbus \
         python-lzo \
         python-opengl \
         python-rencode \
-#        rox-filer \
-#        ttf-ubuntu-font-family \
         x11-apps \
-#        x11-utils \
         xauth \
         xfonts-100dpi \
         xfonts-75dpi \
@@ -41,47 +30,29 @@ RUN echo "deb http://archive.ubuntu.com/ubuntu xenial main universe\n" > /etc/ap
         xserver-xorg-video-dummy \
         xterm \
     && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
-#    && sed -e "s|/lxterminal|/lxterminal -l|" -i /etc/X11/fluxbox/fluxbox-menu \
-#    && sed -e "s/^#\? \?idesk\(.*\)$/idesk \1/" -i $(which startfluxbox)
 
 RUN mkdir -p /tmp/.X11-unix \
     && chmod -R +rwx /tmp/.X11-unix \
     && mkdir -p /run/dbus \
     && chmod -R +rwx /run/dbus
-#     \
-#    && /usr/bin/dbus-uuidgen --ensure
 
 USER ${APP_USER}
 
 ENV DISPLAY=":100.0" \
     SCREEN_WIDTH=1360 \
     SCREEN_HEIGHT=1020
-#     \
-#    DBUS_SESSION_BUS_ADDRESS="/dev/null"
 
 # Minimal Xorg configuration
 #ADD http://xpra.org/xorg.conf ${APP_HOME}/xorg.conf
 COPY xorg.conf ${APP_HOME}/
-#COPY idesk/ ${APP_HOME}/
 RUN touch ${APP_HOME}/.Xmodmap \
-    && touch ${APP_HOME}/.Xauthority
-# \
-#    && mkdir -p "${APP_HOME}/.config/openbox" \
-#    && echo "idesk&" >> "${APP_HOME}/.config/openbox/autostart"
-
-
-# docker rm -f $(docker ps -a -q); docker build -t bravo/jappx:1.0 -f Dockerfile.jappx .;
-# Test:
-#docker run -d --name sshtest bravo/jappx:1.0
-#ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no app@$(docker inspect -f "{{.NetworkSettings.IPAddress}}" sshtest) pwd 2>/dev/null | grep "/home/app" > /dev/null && echo OK || echo ERROR
-#docker rm -f sshtest
+    && touch ${APP_HOME}/.Xauthority \
+    && mkdir -p ${APP_HOME}/.fluxbox \
+    && echo "background: unset" >> ${APP_HOME}/.fluxbox/overlay
 
 # In container:
 # Test1: xpra --no-daemon --no-mdns --no-pulseaudio start :100 --start-child=glxgears
 # Test2: xpra --no-daemon --no-mdns --no-pulseaudio --xvfb="Xorg -dpi 96 -noreset -nolisten tcp +extension GLX +extension RANDR +extension RENDER -logfile /home/app/.xpra/Xvfb-10.log -config /home/app/xorg.conf" start :100 --start-child=glxgears
 # Test3: XPRA_INITENV_COMMAND="xpra initenv" xpra --no-daemon --no-mdns --no-pulseaudio --xvfb="Xorg -dpi 96 -noreset -nolisten tcp -logfile /home/app/.xpra/Xvfb-10.log -config /home/app/xorg.conf" start-desktop :100 --exit-with-child --start-child=startfluxbox
-# From host one of:
-# xpra --ssh="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -p 2200" attach ssh:app@172.17.0.2
-# xpra --ssh="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" attach ssh:app@172.17.0.2
-
-# docker rm -f $(docker ps -a -q); docker build -t sshtest .; docker run -d --name sshtest sshtest
+# From host:
+# xpra attach tcp:$(docker inspect -f "{{.NetworkSettings.IPAddress}}" apprun_jappx):10000

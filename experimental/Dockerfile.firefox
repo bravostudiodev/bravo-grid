@@ -3,6 +3,8 @@ LABEL authors="IgorV <gorvin@users.noreply.github.com>"
 
 USER root
 
+EXPOSE 10000
+
 #=========
 # Firefox
 #=========
@@ -22,37 +24,28 @@ RUN apt-get update -qqy \
 #============
 # GeckoDriver
 #============
-USER root
 ARG GECKODRIVER_VERSION=0.16.1
 RUN wget --no-verbose -O /tmp/geckodriver.tar.gz https://github.com/mozilla/geckodriver/releases/download/v${GECKODRIVER_VERSION}/geckodriver-v${GECKODRIVER_VERSION}-linux64.tar.gz \
-  && rm -rf /opt/geckodriver \
-  && tar -C /opt -zxf /tmp/geckodriver.tar.gz \
-  && rm /tmp/geckodriver.tar.gz \
-  && mv /opt/geckodriver /opt/geckodriver-${GECKODRIVER_VERSION} \
-  && chmod 755 /opt/geckodriver-${GECKODRIVER_VERSION} \
-  && ln -fs /opt/geckodriver-${GECKODRIVER_VERSION} /usr/bin/geckodriver
+    && rm -rf /opt/geckodriver \
+    && tar -C /opt -zxf /tmp/geckodriver.tar.gz \
+    && rm /tmp/geckodriver.tar.gz \
+    && mv /opt/geckodriver /opt/geckodriver-${GECKODRIVER_VERSION} \
+    && chmod 755 /opt/geckodriver-${GECKODRIVER_VERSION} \
+    && ln -fs /opt/geckodriver-${GECKODRIVER_VERSION} /usr/bin/geckodriver
 
-ENV XPRA_TCP_PORT=10200
+RUN update-alternatives --install /usr/bin/x-www-browser x-www-browser /usr/bin/firefox 40
+
+USER ${APP_USER}
 
 # script to be loaded in entry_node.sh
 RUN echo export NODE_BROWSER_VERSION="$(firefox -version | cut -d " " -f 3)">> ${APP_HOME}/.noderc \
-    && echo export NODE_BROWSER_NAME="firefox">> ${APP_HOME}/.noderc \
-    && echo export NODE_XPRA_TCP_PORT="${XPRA_TCP_PORT}" \
-    && update-alternatives --install /usr/bin/x-www-browser x-www-browser /usr/bin/firefox 40
+    && echo export NODE_BROWSER_NAME="firefox">> ${APP_HOME}/.noderc
 
-EXPOSE ${XPRA_TCP_PORT}
-
-#RUN apt-get update -qqy \
-#    && apt-get -qqy --no-install-recommends install xserver-xephyr \
-#    && rm -rf /var/lib/apt/lists/* /var/cache/apt/* \
-#    && apt autoremove -y
-
-RUN apt autoremove -y
-
-USER ${APP_USER}
-COPY node-ext/ "${APP_HOME}/selenium/"
 COPY entry_node.sh "${APP_HOME}/"
+ENTRYPOINT "${APP_HOME}/entry_node.sh"
+
+COPY node-ext/ "${APP_HOME}/selenium/"
 RUN chown -R ${APP_USER}:${APP_USER} ./*
 
-ENTRYPOINT "${APP_HOME}/entry_node.sh"
-# xpra --ssh="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -p 202doc22" attach ssh:app@localhost
+#docker run --rm -e HUB_PORT_4444_TCP_ADDR=172.0.17.2 -e HUB_PORT_4444_TCP_PORT=4444 -it --entrypoint /bin/bash 192.168.6.17/bravo/jappchrome:1.4-SNAPSHOT
+#xpra attach tcp:$(docker inspect -f "{{.NetworkSettings.IPAddress}}" apprun_firefox_1):10000

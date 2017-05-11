@@ -53,19 +53,13 @@ echo "SE_OPTS=${SE_OPTS}"
 function shutdownhandler {
   echo "shutting down node.."
   kill -s SIGTERM ${NODE_PID}
-#  if ! ${NODE_NDEBUG}; then
-#    kill -s SIGTERM ${SSHD_PID}
-#    wait ${SSHD_PID}
-#    killall Xephyr
-#  fi
-#  killall Xorg
   /etc/init.d/dbus stop
   wait ${NODE_PID}
   echo "shutdown complete"
 }
 
 #set -x
-#HUB_PORT_4444_TCP_ADDR=172.18.0.2 HUB_PORT_4444_TCP_PORT=4444 NODE_NDEBUG=true ./entry_point.sh
+#HUB_PORT_4444_TCP_ADDR=172.18.0.2 HUB_PORT_4444_TCP_PORT=4444 NODE_NDEBUG=true ./entry_node.sh
 #xinit /usr/bin/java -cp "/home/app/selenium/*" org.openqa.grid.selenium.GridLauncherV3 -role node -hub http://172.18.0.2:4444/grid/register -nodeConfig /home/app/selenium/config.json -- :100 -dpi 96 -noreset -nolisten tcp +extension GLX +extension RANDR +extension RENDER -logfile ${HOME}/XpraXorg-10.log -config ${HOME}/xorg.conf
 
 NODE_LAUNCH_ARGS="org.openqa.grid.selenium.GridLauncherV3 \
@@ -82,46 +76,23 @@ set -x
 
 cat > "$HOME/fluxbox-startup" <<_EOF
 #!/bin/sh
-# Change your keymap:
-xmodmap "$HOME/.Xmodmap"
-# Applications you want to run with fluxbox.
-# idesk &
 /usr/bin/java ${JAVA_OPTS} -cp "${HOME}/selenium/*" ${NODE_LAUNCH_ARGS} &
-which fbautostart > /dev/null
-if [ \$? -eq 0 ]; then
-    fbautostart
-fi
-exec fluxbox
-# exec fluxbox -log "$fluxdir/log"
+exec fluxbox #-log ".fluxbox/log"
 _EOF
+chmod +x "$HOME/fluxbox-startup"
 
-#/usr/bin/dbus-daemon --nofork --system --nopidfile &
 /etc/init.d/dbus restart
 
 if ! ${NODE_NDEBUG}; then
-#  XEPHYR_COMMAND="/usr/bin/Xephyr -ac -screen ${SCREEN_WIDTH}x${SCREEN_HEIGHT} -br -reset ${DISPLAY}"
-#  XPRA_INITENV_COMMAND="xpra initenv" xpra --no-daemon --no-mdns --no-pulseaudio --xvfb="Xorg ${XORG_ARGS}" \
-#    start :101 --exit-with-child --start-child="${XEPHYR_COMMAND}" --bind-tcp=0.0.0.0:${NODE_XPRA_TCP_PORT} &
   XPRA_INITENV_COMMAND="xpra initenv" xpra --no-daemon --no-mdns --no-pulseaudio --xvfb="Xorg ${XORG_ARGS}" \
-    start-desktop ${DISPLAY} --exit-with-child --start-child="startfluxbox --config ${HOME}/fluxbox-startup" --bind-tcp=0.0.0.0:${NODE_XPRA_TCP_PORT} &
-#  XPRA_PID=$!
-#  /usr/bin/java ${JAVA_OPTS} -cp "${HOME}/selenium/*" ${NODE_LAUNCH_ARGS} &
+    start-desktop ${DISPLAY} --exit-with-child --start-child="${HOME}/fluxbox-startup" --bind-tcp=0.0.0.0:10000 &
   NODE_PID=$!
-#  /usr/sbin/sshd -f sshd_config -D -e &
-#  SSHD_PID=$!
 else
   # xinit client excutable path must start with / or .
-  xinit startfluxbox --config ${HOME}/fluxbox-startup -- ${DISPLAY} ${XORG_ARGS} &
+  xinit ${HOME}/fluxbox-startup -- ${DISPLAY} ${XORG_ARGS} &
   NODE_PID=$!
 fi
 
 trap shutdownhandler SIGTERM SIGINT
 wait ${NODE_PID}
-#if ! ${NODE_NDEBUG}; then
-#  kill -s SIGTERM ${SSHD_PID}
-#  wait ${SSHD_PID}
-#  killall Xephyr
-#fi
-#killall Xorg
 /etc/init.d/dbus stop
-# TODO: u oba slucaja release/debug pokreci fluxbox i dodaj u /usr/bin/java .. selenium ... u $(which startfluxbox)

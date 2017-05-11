@@ -21,8 +21,6 @@ services:
       dockerfile: ./Dockerfile.hub
     image: "${PRIVATE_REGISTRY}bravo/japphub${GRID_VERSION}"
     network_mode: "bridge"
-    expose:
-      - "4444"
     ports:
       - "4444:4444"
     environment:
@@ -36,8 +34,6 @@ services:
       dockerfile: ./Dockerfile.chrome
     image: "${PRIVATE_REGISTRY}bravo/jappchrome${GRID_VERSION}"
     network_mode: "bridge"
-#    ports:
-#      - "20122:22"
     volumes:
       - "/dev/urandom:/dev/random"
       - "/dev/shm:/dev/shm"
@@ -61,8 +57,6 @@ services:
       dockerfile: ./Dockerfile.firefox
     image: "${PRIVATE_REGISTRY}bravo/jappfirefox${GRID_VERSION}"
     network_mode: "bridge"
-#    ports:
-#      - "20222:22"
     volumes:
       - "/dev/urandom:/dev/random"
     links:
