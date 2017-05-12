@@ -1,9 +1,0 @@
-table Icon
-  Caption: Chrome
-  Command: /opt/google/chrome/google-chrome --user-data-dir=~/chrome-profile
-  Icon: /opt/google/chrome/product_logo_32.xpm
-  Width: 48
-  Height: 48
-  X: 30
-  Y: 80
-end

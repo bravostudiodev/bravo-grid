@@ -45,7 +45,7 @@ USER ${APP_USER}
 
 # In container:
 # Test1: xpra --no-daemon --no-mdns --no-pulseaudio start :100 --start-child=glxgears
-# Test2: xpra --no-daemon --no-mdns --no-pulseaudio --xvfb="Xorg -dpi 96 -noreset -nolisten tcp +extension GLX +extension RANDR +extension RENDER -logfile /home/app/.xpra/Xvfb-10.log -config /home/app/xorg.conf" start :100 --start-child=glxgears
-# Test3: XPRA_INITENV_COMMAND="xpra initenv" xpra --no-daemon --no-mdns --no-pulseaudio --xvfb="Xorg -dpi 96 -noreset -nolisten tcp -logfile /home/app/.xpra/Xvfb-10.log -config /home/app/xorg.conf" start-desktop :100 --exit-with-child --start-child=startfluxbox
+# Test2: xpra --no-daemon --no-mdns --no-pulseaudio --xvfb="Xorg -dpi 96 -noreset -nolisten tcp +extension GLX +extension RANDR +extension RENDER -logfile /home/app/.xpra/Xvfb-10.log -config /etc/xpra/xorg.conf" start :100 --start-child=glxgears
+# Test3: XPRA_INITENV_COMMAND="xpra initenv" xpra --no-daemon --no-mdns --no-pulseaudio --xvfb="Xorg -dpi 96 -noreset -nolisten tcp -logfile /home/app/.xpra/Xvfb-10.log -config /etc/xpra/xorg.conf" start-desktop :100 --exit-with-child --start-child=startfluxbox
 # From host:
 # xpra attach tcp:$(docker inspect -f "{{.NetworkSettings.IPAddress}}" apprun_jappx):10000

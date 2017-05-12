@@ -1,9 +1,0 @@
-table Icon
-  Caption: Firefox
-  Command: /usr/bin/firefox
-  Icon: /opt/firefox/browser/chrome/icons/default/default48.png
-  Width: 48
-  Height: 48
-  X: 30
-  Y: 80
-end
