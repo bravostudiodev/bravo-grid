@@ -1,37 +1,31 @@
 FROM ubuntu:16.04
 LABEL authors="IgorV <gorvin@users.noreply.github.com>"
 
+ARG APP_USER=app
+ARG APP_LANG="en_US.UTF-8"
+ARG APP_LANGUAGE="en_US:en"
+ARG APP_LC_ALL="en_US.UTF-8"
+
 ENV DEBIAN_FRONTEND=noninteractive \
-    DEBCONF_NONINTERACTIVE_SEEN=true
+    DEBCONF_NONINTERACTIVE_SEEN=true \
+    TZ="UTC" \
+    APP_USER=${APP_USER} \
+    APP_HOME="/home/${APP_USER}" \
+    TERM=linux
 
-RUN apt-get update -qqy \
-    && apt-get install -qqy --no-install-recommends apt-utils \
-    && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
-
-# Locale
 RUN apt-get update -qqy \
     && apt-get install -qqy --no-install-recommends \
-        language-pack-en \
+        apt-utils \
+    && apt-get install -qqy --no-install-recommends \
         locales \
-    && rm -rf /var/lib/apt/lists/* /var/cache/apt/* \
-    && locale-gen --purge "en_US.UTF-8" \
-    && update-locale LANG="en_US.UTF-8" LANGUAGE="en_US:en" LC_ALL="en_US.UTF-8" \
-    && dpkg-reconfigure --frontend noninteractive locales
-
-ENV LANG="en_US.UTF-8" \
-    LANGUAGE="en_US:en" \
-    LC_ALL="en_US.UTF-8" \
-    TZ="UTC"
-
-# Timezone
-RUN apt-get update -qqy \
-    && apt-get install -qqy --no-install-recommends tzdata \
-    && rm -rf /var/lib/apt/lists/* /var/cache/apt/* \
+    && locale-gen --purge "${APP_LANG}" \
+    && update-locale LANG="${APP_LANG}" LANGUAGE="${APP_LANGUAGE}" LC_ALL="${APP_LC_ALL}" \
+    && dpkg-reconfigure --frontend noninteractive locales \
+    && apt-get install -qqy --no-install-recommends \
+        language-pack-en \
+        tzdata \
     && echo "${TZ}" > /etc/timezone \
-    && dpkg-reconfigure --frontend noninteractive tzdata
-
-# Common tools
-RUN apt-get update -qqy \
+    && dpkg-reconfigure --frontend noninteractive tzdata \
     && apt-get install -qqy --no-install-recommends \
         bzip2 \
         curl \
@@ -40,19 +34,15 @@ RUN apt-get update -qqy \
         openjdk-8-jre-headless \
         unzip \
         wget \
-    && rm -rf /var/lib/apt/lists/* /var/cache/apt/* \
     && sed -e 's/securerandom\.source=file:\/dev\/random/securerandom\.source=file:\/dev\/urandom/' \
-        -i ./usr/lib/jvm/java-8-openjdk-amd64/jre/lib/security/java.security
+        -i /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/security/java.security \
+    && adduser --disabled-password --uid 899 --home ${APP_HOME} --gecos '' ${APP_USER} \
+    && passwd -d ${APP_USER} \
+    && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
 
-ARG APP_USER=app
-ENV APP_USER=${APP_USER} \
-    APP_HOME="/home/${APP_USER}" \
-    TERM=linux
-
-# Add app user
-RUN adduser --disabled-password --uid 899 --home ${APP_HOME} --gecos '' ${APP_USER} \
-    && adduser ${APP_USER} sudo \
-    && passwd -d ${APP_USER}
+ENV LANG=${LOCALE_LANG} \
+    LANGUAGE=${LOCALE_LANGUAGE} \
+    LC_ALL=${LOCALE_LC_ALL}
 
 WORKDIR ${APP_HOME}
 

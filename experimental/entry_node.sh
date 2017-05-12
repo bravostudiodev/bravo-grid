@@ -73,8 +73,7 @@ NODE_LAUNCH_ARGS="org.openqa.grid.selenium.GridLauncherV3 \
   ${SE_OPTS}"
 
 rm -f /tmp/.X*lock
-sed -e "s|Virtual 1360 1020|Virtual ${SCREEN_WIDTH} ${SCREEN_HEIGHT}|" -i "${HOME}/xorg.conf"
-XORG_ARGS="-dpi 96 -noreset -nolisten tcp +extension GLX +extension RANDR +extension RENDER -logfile ${HOME}/XpraXorg-10.log -config ${HOME}/xorg.conf"
+XORG_ARGS="-dpi 96 -noreset -nolisten tcp +extension GLX +extension RANDR +extension RENDER -logfile ${HOME}/XpraXorg${DISPLAY}.log -config /etc/xpra/xorg.conf"
 
 set -x
 

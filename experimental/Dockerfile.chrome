@@ -38,12 +38,14 @@ RUN wget --no-verbose -O /tmp/chromedriver_linux64.zip https://chromedriver.stor
 
 RUN mv /usr/bin/google-chrome /usr/bin/google-chrome-with-sandbox \
     && echo '#!/usr/bin/env bash\necho $0 $@>>google-chrome.log\nexec -a "$0" "/usr/bin/google-chrome-with-sandbox" --no-sandbox "$@" 2>&1 | tee ~/google-chrome-exec.log'> /usr/bin/google-chrome-no-sandbox \
-    && chmod +x /usr/bin/google-chrome-no-sandbox \
+    && chmod a+x /usr/bin/google-chrome-no-sandbox \
     && ln -s /usr/bin/google-chrome-no-sandbox /usr/bin/google-chrome \
     && mv /opt/google/chrome/google-chrome /opt/google/chrome/google-chrome-with-sandbox \
     && echo '#!/usr/bin/env bash\necho $0 $@>>google-chrome-opt.log\nexec -a "$0" "$0-with-sandbox" --no-sandbox "$@" 2>&1 | tee ~/google-chrome-opt-exec.log '> /opt/google/chrome/google-chrome \
-    && chmod +x /opt/google/chrome/google-chrome \
+    && chmod a+x /opt/google/chrome/google-chrome \
     && sed -e "s|^\( *\)\([[]submenu[]] [(]Applications[)] {}.*\)$|\1[exec] (Google Chrome) {/opt/google/chrome/google-chrome} </opt/google/chrome/product_logo_32.xpm>\n\1\2|" -i /etc/X11/fluxbox/fluxbox-menu
+
+ENV DBUS_SESSION_BUS_ADDRESS=/dev/null
 
 USER ${APP_USER}
 

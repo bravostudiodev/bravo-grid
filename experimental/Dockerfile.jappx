@@ -2,14 +2,20 @@ FROM bravo/japp:1.0
 LABEL authors="IgorV <gorvin@users.noreply.github.com>"
 
 # xpra and xorg-video-dummy with dependencies
+
 USER root
+
+ENV DISPLAY=":100.0" \
+    SCREEN_WIDTH=1360 \
+    SCREEN_HEIGHT=1020
+
 RUN echo "deb http://archive.ubuntu.com/ubuntu xenial main universe\n" > /etc/apt/sources.list \
     && echo "deb http://archive.ubuntu.com/ubuntu xenial-updates main universe\n" >> /etc/apt/sources.list \
     && echo "deb http://security.ubuntu.com/ubuntu xenial-security main universe\n" >> /etc/apt/sources.list \
     && echo "deb http://winswitch.org/ xenial main" > /etc/apt/sources.list.d/winswitch.list \
     && curl http://winswitch.org/gpg.asc | apt-key add - \
     && apt-get update -qqy \
-    && apt-get -qqy --no-install-recommends install \
+    && apt-get install -qqy --no-install-recommends \
         dbus-x11 \
         fluxbox \
         fonts-ipafont-gothic \
@@ -29,26 +35,13 @@ RUN echo "deb http://archive.ubuntu.com/ubuntu xenial main universe\n" > /etc/ap
         xserver-xorg-input-void \
         xserver-xorg-video-dummy \
         xterm \
+    && sed -e "s/^\( *\)\(Virtual.*\)$/\1#\2\n\1Virtual ${SCREEN_WIDTH} ${SCREEN_HEIGHT}/" -i /etc/xpra/xorg.conf \
+    && mkdir -p /tmp/.X11-unix /run/dbus \
+    && chmod -R a+rwx /tmp/.X11-unix /run/dbus \
+    && su -l ${APP_USER} -c "touch ${APP_HOME}/.Xmodmap ${APP_HOME}/.Xauthority && mkdir -p ${APP_HOME}/.fluxbox && echo background: unset >> ${APP_HOME}/.fluxbox/overlay" \
     && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
 
-RUN mkdir -p /tmp/.X11-unix \
-    && chmod -R +rwx /tmp/.X11-unix \
-    && mkdir -p /run/dbus \
-    && chmod -R +rwx /run/dbus
-
 USER ${APP_USER}
-
-ENV DISPLAY=":100.0" \
-    SCREEN_WIDTH=1360 \
-    SCREEN_HEIGHT=1020
-
-# Minimal Xorg configuration
-#ADD http://xpra.org/xorg.conf ${APP_HOME}/xorg.conf
-COPY xorg.conf ${APP_HOME}/
-RUN touch ${APP_HOME}/.Xmodmap \
-    && touch ${APP_HOME}/.Xauthority \
-    && mkdir -p ${APP_HOME}/.fluxbox \
-    && echo "background: unset" >> ${APP_HOME}/.fluxbox/overlay
 
 # In container:
 # Test1: xpra --no-daemon --no-mdns --no-pulseaudio start :100 --start-child=glxgears
