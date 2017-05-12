@@ -46,7 +46,8 @@ RUN apt-get update -qqy \
 
 ARG APP_USER=app
 ENV APP_USER=${APP_USER} \
-    APP_HOME="/home/${APP_USER}"
+    APP_HOME="/home/${APP_USER}" \
+    TERM=linux
 
 # Add app user
 RUN adduser --disabled-password --uid 899 --home ${APP_HOME} --gecos '' ${APP_USER} \

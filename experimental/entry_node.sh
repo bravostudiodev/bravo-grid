@@ -52,9 +52,13 @@ echo "SE_OPTS=${SE_OPTS}"
 
 function shutdownhandler {
   echo "shutting down node.."
-  kill -s SIGTERM ${NODE_PID}
-  /etc/init.d/dbus stop
-  wait ${NODE_PID}
+  kill -s SIGTERM ${XSRV_PID}
+  if [[ -v JAVA_PID ]]; then
+    kill -s SIGTERM ${JAVA_PID}
+    wait ${JAVA_PID}
+  fi
+  wait ${XSRV_PID}
+  killall dbus-daemon
   echo "shutdown complete"
 }
 
@@ -74,25 +78,17 @@ XORG_ARGS="-dpi 96 -noreset -nolisten tcp +extension GLX +extension RANDR +exten
 
 set -x
 
-cat > "$HOME/fluxbox-startup" <<_EOF
-#!/bin/sh
-/usr/bin/java ${JAVA_OPTS} -cp "${HOME}/selenium/*" ${NODE_LAUNCH_ARGS} &
-exec fluxbox #-log ".fluxbox/log"
-_EOF
-chmod +x "$HOME/fluxbox-startup"
-
-/etc/init.d/dbus restart
-
 if ! ${NODE_NDEBUG}; then
+  /usr/bin/java ${JAVA_OPTS} -cp "${HOME}/selenium/*" ${NODE_LAUNCH_ARGS} &
+  JAVA_PID=$!
   XPRA_INITENV_COMMAND="xpra initenv" xpra --no-daemon --no-mdns --no-pulseaudio --xvfb="Xorg ${XORG_ARGS}" \
-    start-desktop ${DISPLAY} --exit-with-child --start-child="${HOME}/fluxbox-startup" --bind-tcp=0.0.0.0:10000 &
-  NODE_PID=$!
+    start-desktop ${DISPLAY} --exit-with-child --start-child="exec fluxbox" --bind-tcp=0.0.0.0:10000 &
+  XSRV_PID=$!
 else
   # xinit client excutable path must start with / or .
-  xinit ${HOME}/fluxbox-startup -- ${DISPLAY} ${XORG_ARGS} &
-  NODE_PID=$!
+  xinit /usr/bin/java ${JAVA_OPTS} -cp "${HOME}/selenium/*" ${NODE_LAUNCH_ARGS} -- ${DISPLAY} ${XORG_ARGS} &
+  XSRV_PID=$!
 fi
 
 trap shutdownhandler SIGTERM SIGINT
-wait ${NODE_PID}
-/etc/init.d/dbus stop
+wait ${XSRV_PID}
