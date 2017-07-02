@@ -19,7 +19,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <seleniumsrv.version>3.4.0-ffwebext2</seleniumsrv.version>
+        <seleniumsrv.version>3.4.0</seleniumsrv.version>
     </properties>
 
     <build>

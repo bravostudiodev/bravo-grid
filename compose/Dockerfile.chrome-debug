@@ -1,32 +1,27 @@
 # docker build -f node-chrome-debug/Dockerfile -t seleniumext/node-chrome-debug:custom .
-FROM selenium/node-chrome-debug:3.4.0-chromium
+FROM selenium/node-chrome-debug:3.4.0-einsteinium
 MAINTAINER IgorV <gorvin@users.noreply.github.com>
 
-USER root
-
-#==================
-# Chrome webdriver
-#==================
-ARG CHROME_DRIVER_VERSION=2.29
-RUN wget --no-verbose -O /tmp/chromedriver_linux64.zip https://chromedriver.storage.googleapis.com/$CHROME_DRIVER_VERSION/chromedriver_linux64.zip \
-  && rm -rf /opt/selenium/chromedriver* \
-  && unzip /tmp/chromedriver_linux64.zip -d /opt/selenium \
-  && rm /tmp/chromedriver_linux64.zip \
-  && mv /opt/selenium/chromedriver /opt/selenium/chromedriver-$CHROME_DRIVER_VERSION \
-  && chmod 755 /opt/selenium/chromedriver-$CHROME_DRIVER_VERSION \
-  && ln -fs /opt/selenium/chromedriver-$CHROME_DRIVER_VERSION /usr/bin/chromedriver
+##==================
+## Chrome webdriver
+##==================
+#ARG CHROME_DRIVER_VERSION=2.29
+#RUN wget --no-verbose -O /tmp/chromedriver_linux64.zip https://chromedriver.storage.googleapis.com/$CHROME_DRIVER_VERSION/chromedriver_linux64.zip \
+#  && rm -rf /opt/selenium/chromedriver* \
+#  && unzip /tmp/chromedriver_linux64.zip -d /opt/selenium \
+#  && rm /tmp/chromedriver_linux64.zip \
+#  && mv /opt/selenium/chromedriver /opt/selenium/chromedriver-$CHROME_DRIVER_VERSION \
+#  && chmod 755 /opt/selenium/chromedriver-$CHROME_DRIVER_VERSION \
+#  && ln -fs /opt/selenium/chromedriver-$CHROME_DRIVER_VERSION /usr/bin/chromedriver
 
 RUN sed -i 's@-jar /opt/selenium/selenium-server-standalone.jar@-cp "/opt/selenium/ext/*" org.openqa.grid.selenium.GridLauncherV3@' \
-    /opt/bin/entry_point.sh \
- && sed -i 's@\\"seleniumProtocol\\": \\"WebDriver\\"@\\"seleniumProtocol\\": \\"WebDriver\\",\n      \\"extension.bravoCapability\\": true@' \
-    /opt/selenium/generate_config \
- && sed -i 's@\\"registerCycle\\": $NODE_REGISTER_CYCLE@\\"registerCycle\\": $NODE_REGISTER_CYCLE,\n  \\"servlets\\": [\n    \\"com.bravostudiodev.grid.BravoExtensionServlet\\"\n  ]@' \
-    /opt/selenium/generate_config
+        /opt/bin/entry_point.sh \
+    && sed -i -e 's@^\([ \t][ \t]*\){@\1{\n\1  \"extension.bravoCapability\": true,@' \
+        -e 's@^{@{\n  \"servlets\": [\n    \"com.bravostudiodev.grid.BravoExtensionServlet\"\n  ],@' \
+        /opt/bin/generate_config \
+    && rm /opt/selenium/selenium-server-standalone.jar
 
 COPY node-ext/ /opt/selenium/ext/
-
-RUN chown -R seluser:seluser /opt/selenium/ \
- && rm /opt/selenium/selenium-server-standalone.jar
 
 #RUN echo deb http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main | tee /etc/apt/sources.list.d/webupd8team.list \
 # && echo deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main | tee -a /etc/apt/sources.list.d/webupd8team.list \
@@ -57,7 +52,3 @@ RUN chown -R seluser:seluser /opt/selenium/ \
 # && sed -i 's/^fluxbox/idesk \&\nfluxbox/' /opt/bin/entry_point.sh
 # 
 #COPY idesk/ /root/
-
-
-#Continue as root because of problems with VNC server execution as seluser
-#USER seluser
