@@ -23,4 +23,6 @@ SCRIPT_DIR="$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
 sed -i "s/\(FROM.*:\).*/\1$2/" ${SCRIPT_DIR}/compose/Dockerfile.*
 
 mvn versions:set -DnewVersion=$3
+mvn versions:set -DnewVersion=$3 -f "${SCRIPT_DIR}/compose/deps-hub.pom"
+mvn versions:set -DnewVersion=$3 -f "${SCRIPT_DIR}/compose/deps-node.pom"
 sed -i "s/GRID_VERSION:=\":.*\"/GRID_VERSION:=\":$3\"/" "${SCRIPT_DIR}/compose/grid-build.sh" "${SCRIPT_DIR}/bravogridctl.sh"

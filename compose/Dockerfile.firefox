@@ -1,5 +1,5 @@
 # docker build -f node-firefox-debug/Dockerfile -t seleniumext/node-firefox-debug:custom .
-FROM selenium/node-firefox:3.4.0-einsteinium
+FROM selenium/node-firefox-debug:3.4.0-einsteinium
 MAINTAINER IgorV <gorvin@users.noreply.github.com>
 
 ##============
@@ -32,3 +32,13 @@ COPY node-ext/ /opt/selenium/ext/
 #     apt-transport-https \
 #     ttf-mscorefonts-installer \
 # && rm -r /var/lib/apt/lists/*
+
+#RUN apt-get update -y \
+# && apt-get install -y --no-install-recommends \
+#     idesk \
+#	 rox-filer \
+# && rm -r /var/lib/apt/lists/* \
+# && sed -i 's/^fluxbox/idesk \&\nfluxbox/' /opt/bin/entry_point.sh
+# 
+#COPY idesk/ /root/
+#RUN ln -s $(ls -d /opt/firefox-*) /opt/firefox

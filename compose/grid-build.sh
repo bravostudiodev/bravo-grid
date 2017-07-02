@@ -18,15 +18,35 @@ case "$OSTYPE" in
         ;;
 esac
 
+if [ "$1" == "run" ]; then
+    : ${CHSCALE:="1"}
+    : ${FFSCALE:="1"}
+    echo "SUM_OF_CHSCALE_AND_FFSCALE=$((CHSCALE+FFSCALE))" >> ".env"
+fi
+
 echo Building compose file: "${SCRIPT_DIR}/docker-compose.yml"
-echo "PRIVATE_REGISTRY=${PRIVATE_REGISTRY}" > "${SCRIPT_DIR}/.env"
+echo "PREFIX=${PRIVATE_REGISTRY}" > "${SCRIPT_DIR}/.env"
 echo "GRID_VERSION=${GRID_VERSION}" >> "${SCRIPT_DIR}/.env"
 unset MSYS_NO_PATHCONV
 pushd "${SCRIPT_DIR}"
-${SCRIPT_DIR}/../xmvn/docker-compose.sh kill || true
-${SCRIPT_DIR}/../xmvn/docker-compose.sh rm -f || true
-${SCRIPT_DIR}/../xmvn/docker-compose.sh build || exit 1
-EXIT_CODE=$?
-# docker rmi -f $(docker images -f dangling=true | awk '/none/ {print $3}') 2>/dev/null || true
+DOCKE_COMPOSE="docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock -v /usr/bin/docker:/usr/bin/docker \
+ -v $PWD:/apprun -w /apprun docker/compose:1.14.0"
+
+if [ "$1" != "run" ]; then
+    if [ "$1" == "updres" ]; then
+     mvn -f deps-hub.pom generate-resources || exit 1
+     mvn -f deps-node.pom generate-resources || exit 1
+    fi
+    ${DOCKE_COMPOSE} build || exit 1
+    EXIT_CODE=$?
+else
+    ${DOCKE_COMPOSE} up -d --scale chrome=${CHSCALE} --scale firefox=${FFSCALE}
+fi
 
 exit ${EXIT_CODE}
+
+# export CHSCALE=2 FFSCALE=4
+# echo "PREFIX=192.168.6.17/" > ".env"
+# echo "SUM_OF_CHSCALE_AND_FFSCALE=$((CHSCALE+FFSCALE))" >> ".env"
+# echo "GRID_VERSION=${GRID_VERSION}" >> ".env"
+# $DOCKER_COMPOSE  up -d --scale firefox=${FFSCALE} --scale chrome=${CHSCALE}

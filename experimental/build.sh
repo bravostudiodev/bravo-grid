@@ -24,7 +24,7 @@ echo "GRID_VERSION=${GRID_VERSION}" >> "${SCRIPT_DIR}/.env"
 unset MSYS_NO_PATHCONV
 pushd "${SCRIPT_DIR}"
 DOCKE_COMPOSE="docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock -v /usr/bin/docker:/usr/bin/docker \
- -v $PWD:/apprun -w /apprun docker/compose:1.13.0"
+ -v $PWD:/apprun -w /apprun docker/compose:1.14.0"
 ${DOCKE_COMPOSE} -f docker-compose-japp.yml build || exit 1
 if [ "$1" == "updres" ]; then
  mvn -f deps-hub.pom generate-resources || exit 1

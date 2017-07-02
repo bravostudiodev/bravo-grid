@@ -29,8 +29,9 @@
                                 <condition property="binbash" value="${env.PROGRAMFILES}/Git/bin/bash.exe"><os family="windows"/></condition>
                                 <condition property="binbash" value="/bin/bash"><os family="unix"/></condition>
                                 <!--suppress MavenModelInspection -->
-                                <exec executable="${binbash}" dir=".." failonerror="true">
-                                    <arg value='./compose/grid-build.sh'/> <!-- IMPORTANT: Set eof=lf in .gitattributes for this file -->
+                                <exec executable="${binbash}" failonerror="true">
+                                    <arg value='./grid-build.sh'/> <!-- IMPORTANT: Set eof=lf in .gitattributes for this file -->
+                                    <arg value='updres'/> <!-- IMPORTANT: Set eof=lf in .gitattributes for this file -->
                                 </exec>
                             </target>
                         </configuration>

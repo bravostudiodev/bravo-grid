@@ -12,8 +12,6 @@
     <modules>
         <module>bravo-extension</module>
         <module>bravo-proxy</module>
-        <module>deps-hub</module>
-        <module>deps-node</module>
         <module>compose</module>
     </modules>
 
