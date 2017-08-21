@@ -1,5 +1,5 @@
 # docker build -f hub/Dockerfile -t seleniumext/hub:custom .
-FROM selenium/hub:3.4.0-einsteinium
+FROM selenium/hub:3.4.0-francium
 MAINTAINER IgorV <gorvin@users.noreply.github.com>
 
 RUN sed -i 's@-jar /opt/selenium/selenium-server-standalone.jar@-cp "/opt/selenium/ext/*" org.openqa.grid.selenium.GridLauncherV3@' \

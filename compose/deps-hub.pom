@@ -10,7 +10,7 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
-        <bravogrid.version>1.4-SNAPSHOT</bravogrid.version>
+        <bravogrid.version>1.5-SNAPSHOT</bravogrid.version>
     </properties>
 
     <build>

@@ -1,5 +1,5 @@
 # docker build -f node-firefox-debug/Dockerfile -t seleniumext/node-firefox-debug:custom .
-FROM selenium/node-firefox-debug:3.4.0-einsteinium
+FROM selenium/node-firefox-debug:3.4.0-francium
 MAINTAINER IgorV <gorvin@users.noreply.github.com>
 
 ##============

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 : ${PRIVATE_REGISTRY:="192.168.6.17/"}
-: ${GRID_VERSION:=":1.4-SNAPSHOT"}
+: ${GRID_VERSION:=":1.5-SNAPSHOT"}
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 #SCRIPT_NAME="$(basename "$(test -L "$0" && readlink "$0" || echo "$0")")"

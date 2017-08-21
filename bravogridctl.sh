@@ -2,7 +2,7 @@
 
 : ${CONTAINER_PREFIX:="bravo_"}
 : ${PRIVATE_REGISTRY:="192.168.6.17/"}
-: ${GRID_VERSION:=":1.4-SNAPSHOT"}
+: ${GRID_VERSION:=":1.5-SNAPSHOT"}
 
 case "$1" in
     start|stop|print-grid-ip)
