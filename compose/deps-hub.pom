@@ -7,7 +7,11 @@
     <groupId>com.bravostudiodev.grid</groupId>
     <artifactId>deps-hub</artifactId>
     <packaging>pom</packaging>
-    <version>1.4-SNAPSHOT</version>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <bravogrid.version>1.4-SNAPSHOT</bravogrid.version>
+    </properties>
 
     <build>
         <plugins>
@@ -35,6 +39,7 @@
             <!-- Copy Maven dependencies into project basedir -->
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.0.1</version>
                 <executions>
                     <execution>
                         <id>prepare-node-dependencies</id>
@@ -69,7 +74,7 @@
         <dependency>
             <groupId>com.bravostudiodev.grid</groupId>
             <artifactId>bravo-proxy</artifactId>
-            <version>${project.version}</version>
+            <version>${bravogrid.version}</version>
         </dependency>
     </dependencies>
 </project>

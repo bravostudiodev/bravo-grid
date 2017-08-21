@@ -34,8 +34,8 @@ DOCKE_COMPOSE="docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock 
 
 if [ "$1" != "run" ]; then
     if [ "$1" == "updres" ]; then
-     mvn -f deps-hub.pom generate-resources || exit 1
-     mvn -f deps-node.pom generate-resources || exit 1
+     mvn "-Dbravogrid.version=${GRID_VERSION}" -f deps-hub.pom generate-resources || exit 1
+     mvn "-Dbravogrid.version=${GRID_VERSION}" -f deps-node.pom generate-resources || exit 1
     fi
     ${DOCKE_COMPOSE} build || exit 1
     EXIT_CODE=$?

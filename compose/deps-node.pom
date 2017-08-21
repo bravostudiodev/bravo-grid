@@ -7,7 +7,11 @@
     <groupId>com.bravostudiodev.grid</groupId>
     <artifactId>deps-node</artifactId>
     <packaging>pom</packaging>
-    <version>1.4-SNAPSHOT</version>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <bravogrid.version>1.4-SNAPSHOT</bravogrid.version>
+    </properties>
 
     <build>
         <plugins>
@@ -35,6 +39,7 @@
             <!-- Copy Maven dependencies into project basedir -->
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.0.1</version>
                 <executions>
                     <execution>
                         <id>prepare-node-dependencies</id>
@@ -69,14 +74,14 @@
         <dependency>
             <groupId>com.bravostudiodev.grid</groupId>
             <artifactId>bravo-extension</artifactId>
-            <version>${project.version}</version>
+            <version>${bravogrid.version}</version>
         </dependency>
         <!--NOTE: Dependency on bravo-proxy in nodes normally should be needed but due to the bug: https://github.com/SeleniumHQ/selenium/issues/3268,
         this dependency must exist to prevent node configuration fallback to default, see bug: https://github.com/jenkinsci/selenium-plugin/issues/104-->
         <dependency>
             <groupId>com.bravostudiodev.grid</groupId>
             <artifactId>bravo-proxy</artifactId>
-            <version>${project.version}</version>
+            <version>${bravogrid.version}</version>
         </dependency>
     </dependencies>
 </project>
