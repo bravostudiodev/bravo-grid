@@ -2,7 +2,9 @@
 **/.idea_modules/
 **/out/
 **/target/
-
+**/.settings/
+**/.classpath
+**/.project
 *.orig
 **/*.iml
 *.iws
