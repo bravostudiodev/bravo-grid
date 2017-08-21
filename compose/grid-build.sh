@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 : ${PRIVATE_REGISTRY:="192.168.6.17/"}
-: ${GRID_VERSION:=":1.5-SNAPSHOT"}
+: ${GRID_VERSION:=":1.4-SNAPSHOT"}
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 #SCRIPT_NAME="$(basename "$(test -L "$0" && readlink "$0" || echo "$0")")"
@@ -29,20 +29,34 @@ echo "PREFIX=${PRIVATE_REGISTRY}" > "${SCRIPT_DIR}/.env"
 echo "GRID_VERSION=${GRID_VERSION}" >> "${SCRIPT_DIR}/.env"
 unset MSYS_NO_PATHCONV
 pushd "${SCRIPT_DIR}"
-DOCKE_COMPOSE="docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock -v /usr/bin/docker:/usr/bin/docker \
- -v $PWD:/apprun -w /apprun docker/compose:1.14.0"
+
+ENTRYPOINT="$(docker inspect -f '{{ range $val := .ContainerConfig.Entrypoint }}{{ $val }} {{ end }}' docker/compose:1.14.0 | tr -d '\n')"
+echo "ENTRYPOINT=${ENTRYPOINT}"
+
+DOCKER_COMPOSE="docker run --rm -i -v /var/run/docker.sock:/var/run/docker.sock -v /usr/bin/docker:/usr/bin/docker \
+ -v $PWD:/apprun -w /apprun --entrypoint /bin/sh docker/compose:1.14.0 -c"
+
+#PYTHONUSERBASE=${SCRIPT_DIR}
+#pip install --user docker-compose
+
+RESULT=""
 
 if [ "$1" != "run" ]; then
     if [ "$1" == "updres" ]; then
-     mvn "-Dbravogrid.version=${GRID_VERSION}" -f deps-hub.pom generate-resources || exit 1
-     mvn "-Dbravogrid.version=${GRID_VERSION}" -f deps-node.pom generate-resources || exit 1
+     mvn "-Dbravogrid.version=${GRID_VERSION:1}" -f deps-hub.pom generate-resources || exit 1
+     mvn "-Dbravogrid.version=${GRID_VERSION:1}" -f deps-node.pom generate-resources || exit 1
     fi
-    ${DOCKE_COMPOSE} build || exit 1
-    EXIT_CODE=$?
+    echo "Starting docker build ..."
+    RESULT=$(eval "${DOCKER_COMPOSE} \"${ENTRYPOINT} build && echo DOCKERPASSED || echo DOCKERFAILED\"")
+    # EXIT_CODE=$?
+    echo "... finished docker build. ${RESULT}"
 else
-    ${DOCKE_COMPOSE} up -d --scale chrome=${CHSCALE} --scale firefox=${FFSCALE}
+    #${DOCKER_COMPOSE} up -d --scale chrome=${CHSCALE} --scale firefox=${FFSCALE}
+    RESULT=$(eval "${DOCKER_COMPOSE} \"${ENTRYPOINT} up -d --scale chrome=${CHSCALE} --scale firefox=${FFSCALE} && echo DOCKERPASSED || echo DOCKERFAILED\"")
 fi
 
+echo "${RESULT}"
+(echo ${RESULT} | grep "DOCKERPASSED") && EXIT_CODE=0 || EXIT_CODE=1
 exit ${EXIT_CODE}
 
 # export CHSCALE=2 FFSCALE=4

@@ -1,6 +1,8 @@
 # docker build -f node-chrome-debug/Dockerfile -t seleniumext/node-chrome-debug:custom .
-FROM selenium/node-chrome-debug:3.4.0-francium
+FROM selenium/node-chrome-debug:3.4.0-einsteinium
 MAINTAINER IgorV <gorvin@users.noreply.github.com>
+
+USER root
 
 ##==================
 ## Chrome webdriver
@@ -20,6 +22,8 @@ RUN sed -i 's@-jar /opt/selenium/selenium-server-standalone.jar@-cp "/opt/seleni
         -e 's@^{@{\n  \"servlets\": [\n    \"com.bravostudiodev.grid.BravoExtensionServlet\"\n  ],@' \
         /opt/bin/generate_config \
     && rm /opt/selenium/selenium-server-standalone.jar
+
+USER seluser
 
 COPY node-ext/ /opt/selenium/ext/
 

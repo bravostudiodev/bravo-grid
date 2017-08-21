@@ -32,7 +32,7 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile.chrome
-    image: "${PREFIX}grid/chrome{GRID_VERSION}"
+    image: "${PREFIX}grid/chrome${GRID_VERSION}"
     network_mode: "bridge"
     volumes:
       - "/dev/urandom:/dev/random"
@@ -55,7 +55,7 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile.firefox
-    image: "${PREFIX}grid/firefox{GRID_VERSION}"
+    image: "${PREFIX}grid/firefox${GRID_VERSION}"
     network_mode: "bridge"
     volumes:
       - "/dev/urandom:/dev/random"

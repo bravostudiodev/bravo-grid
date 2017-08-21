@@ -1,6 +1,8 @@
 # docker build -f hub/Dockerfile -t seleniumext/hub:custom .
-FROM selenium/hub:3.4.0-francium
+FROM selenium/hub:3.4.0-einsteinium
 MAINTAINER IgorV <gorvin@users.noreply.github.com>
+
+USER root
 
 RUN sed -i 's@-jar /opt/selenium/selenium-server-standalone.jar@-cp "/opt/selenium/ext/*" org.openqa.grid.selenium.GridLauncherV3@' \
         /opt/bin/entry_point.sh \
@@ -8,5 +10,7 @@ RUN sed -i 's@-jar /opt/selenium/selenium-server-standalone.jar@-cp "/opt/seleni
         -e 's@org.openqa.grid.internal.utils.DefaultCapabilityMatcher@com.bravostudiodev.grid.CustomCapabilityMatcher@' \
         /opt/bin/generate_config /opt/selenium/config.json \
     && rm /opt/selenium/selenium-server-standalone.jar
+
+USER seluser
 
 COPY hub-ext/ /opt/selenium/ext/
