@@ -40,9 +40,9 @@ RUN apt-get update -qqy \
     && passwd -d ${APP_USER} \
     && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
 
-ENV LANG=${LOCALE_LANG} \
-    LANGUAGE=${LOCALE_LANGUAGE} \
-    LC_ALL=${LOCALE_LC_ALL}
+ENV LANG=${APP_LANG} \
+    LANGUAGE=${APP_LANGUAGE} \
+    LC_ALL=${APP_LC_ALL}
 
 WORKDIR ${APP_HOME}
 
