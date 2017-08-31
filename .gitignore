@@ -3,6 +3,9 @@
 **/out/
 **/target/
 **/.settings/
+**/.vscode/
+**/.gradle/
+**/build/
 **/.classpath
 **/.project
 *.orig
