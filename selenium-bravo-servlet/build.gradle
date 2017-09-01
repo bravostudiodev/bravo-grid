@@ -48,6 +48,7 @@ println sourceSets.main.output.resourcesDir
 println sourceSets.test.output.resourcesDir
 
 jar {
+    from configurations.runtime.asFileTree.files.collect { zipTree(it) }
     manifest {
         attributes 'Main-Class': mainClassName
     }
