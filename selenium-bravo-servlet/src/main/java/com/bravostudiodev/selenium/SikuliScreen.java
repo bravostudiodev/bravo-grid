@@ -54,11 +54,13 @@ public class SikuliScreen {
     }
 
     public String takeBase64Screenshot() throws IOException {
+        LOGGER.info("taking screenshot");
         return imageToBase64(primaryScreen.capture());
     }
 
     @SuppressWarnings("unused")
     public String takeBase64Screenshot(ScreenRegion region) throws IOException {
+        LOGGER.info("taking region screenshot");
         return imageToBase64(region.capture());
     }
 
@@ -103,7 +105,9 @@ public class SikuliScreen {
     }
 
     public void click(ScreenRegion region) {
-        remoteMouse.click(region.getCenter());
+        ScreenLocation loc = region.getCenter();
+        LOGGER.info("clicking region");
+        remoteMouse.click(loc);
     }
 
     public void click(ScreenRegion region, int xOff, int yOff) {
@@ -245,6 +249,7 @@ public class SikuliScreen {
     }
 
     public boolean addTarget(String targetName, String b64PNG) throws IOException {
+        LOGGER.info("adding target " + targetName);
         ImageTarget targetImg = images.get(targetName);
         if (null == targetImg) {
             ImageTarget targetImg1 = new ImageTarget(imageFromBase64(b64PNG));
@@ -264,6 +269,7 @@ public class SikuliScreen {
     }
 
     public ScreenRegion find(String targetName) {
+        LOGGER.info("finding target " + targetName);
         ImageTarget targetImg = images.get(targetName);
         if (null == targetImg)
             throw new UnknownImageTarget("Unkown target name " + targetName + ", not added with addTarget method");
@@ -276,6 +282,7 @@ public class SikuliScreen {
     }
 
     public List<ScreenRegion> findAll(String targetName) {
+        LOGGER.info("finding all targets " + targetName);
         ImageTarget targetImg = images.get(targetName);
         if (null == targetImg)
             throw new UnknownImageTarget("Unkown target name " + targetName + ", not added with addTarget method");
