@@ -6,10 +6,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.openqa.grid.internal.DefaultTimeSource;
 import org.openqa.grid.internal.ExternalSessionKey;
 import org.openqa.grid.internal.Registry;
 import org.openqa.grid.internal.TestSession;
+
+import java.time.Clock;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
@@ -35,7 +36,7 @@ public class SeleniumSessionsTest {
     @Before
     public void setUp() {
         seleniumSessions = new SeleniumSessions(registry);
-        activeSession = spy(new TestSession(null, null, new DefaultTimeSource()));
+        activeSession = spy(new TestSession(null, null, Clock.systemUTC()));
 
         when(activeSession.getExternalKey()).thenReturn(externalSessionKey);
         when(externalSessionKey.getKey()).thenReturn("sessionId");
