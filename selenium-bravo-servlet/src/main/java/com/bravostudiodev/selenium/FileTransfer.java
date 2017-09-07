@@ -5,6 +5,7 @@ import org.apache.commons.io.IOUtils;
 
 import javax.xml.bind.DatatypeConverter;
 import java.io.*;
+import java.nio.file.Paths;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -26,24 +27,33 @@ public class FileTransfer {
         }
     }
 
-    public String saveFile(String fileExt, String fileB64Data) throws IOException {
-        LOGGER.info("Creating temporary file");
-        File tempFile = File.createTempFile("upload", fileExt);
+    public String saveFile(String fullAbsPathOrPrefixForTempName, String fileB64Data) throws IOException {
+        LOGGER.info("Saving file " + fullAbsPathOrPrefixForTempName);
+        File targetFile = (Paths.get(fullAbsPathOrPrefixForTempName).isAbsolute())
+                ? new File(fullAbsPathOrPrefixForTempName)
+                : File.createTempFile("upload", fullAbsPathOrPrefixForTempName);
         byte[] data = DatatypeConverter.parseBase64Binary(fileB64Data);
         try (InputStream isBytes = new ByteArrayInputStream(data);
-            OutputStream osFile = new FileOutputStream(tempFile)) {
+            OutputStream osFile = new FileOutputStream(targetFile)) {
             LOGGER.info("Copying input data to file");
             IOUtils.copy(isBytes, osFile);
         }
-        return tempFile.getAbsolutePath();
+        return targetFile.getAbsolutePath();
     }
 
-    public String saveZipContent(String b64Zip) throws IOException {
+    public String saveZipContent(String b64Zip, String wantedTargetDir) throws IOException {
         byte[] zipBytes = DatatypeConverter.parseBase64Binary(b64Zip);
-        File outputFolder = Files.createTempDir();
+        File outputFolder = (wantedTargetDir == null)
+                ? Files.createTempDir()
+                : new File(wantedTargetDir);
+
         LOGGER.info("Unzipping archive");
         unZipIt(new ByteArrayInputStream(zipBytes), outputFolder);
         return outputFolder.getAbsolutePath();
+    }
+
+    public String saveZipContent(String b64Zip) throws IOException {
+        return saveZipContent(b64Zip, null);
     }
 
     private static void unZipIt(InputStream isZip, File outputFolder) throws IOException {
