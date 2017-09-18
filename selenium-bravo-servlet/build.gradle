@@ -1,4 +1,4 @@
-group 'com.bravostudiodev.selenium'
+group 'com.bravostudiodev'
 version '2.0-SNAPSHOT'
 
 apply plugin: 'maven'
@@ -48,10 +48,35 @@ println sourceSets.main.output.resourcesDir
 println sourceSets.test.output.resourcesDir
 
 jar {
+
+}
+
+task fulljar(type: Jar) {
+    classifier = "deps"
     from configurations.runtime.asFileTree.files.collect { zipTree(it) }
     manifest {
         attributes 'Main-Class': mainClassName
     }
 }
 
-//testClasses.dependsOn.add(processTestResources)
+task createPom {
+    def archiveNameNoExt = jar.archiveName.take(jar.archiveName.lastIndexOf('.'))
+    pom {
+        project {
+            groupId project.group
+            artifactId jar.baseName
+            version project.version
+        }
+    }.writeTo(new File(project.buildDir, "libs/" + archiveNameNoExt + ".pom").getCanonicalFile())
+}
+
+task releaseZip(type: Zip, dependsOn: createPom) {
+    def archiveNameNoExt = jar.archiveName.take(jar.archiveName.lastIndexOf('.'))
+    from new File(project.buildDir, "libs/").getCanonicalPath()
+    include archiveNameNoExt + ".pom"
+    include archiveNameNoExt + ".jar"
+    archiveName archiveNameNoExt + '.zip'
+    destinationDir(new File(project.buildDir, "libs/"))
+}
+
+jar.finalizedBy(fulljar, releaseZip)
