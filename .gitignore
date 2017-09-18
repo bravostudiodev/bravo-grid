@@ -10,6 +10,7 @@
 **/.project
 *.orig
 **/*.iml
+**/*.ipr
 *.iws
 **/ext/
 **/*.jar
