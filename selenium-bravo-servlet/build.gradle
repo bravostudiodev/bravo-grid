@@ -1,5 +1,5 @@
 group 'com.bravostudiodev'
-version '2.1-SNAPSHOT'
+version '2.1'
 
 apply plugin: 'maven'
 apply plugin: 'maven-publish' // task publishToMavenLocal
@@ -35,25 +35,22 @@ dependencies {
     testCompile 'org.mockito:mockito-all:1.10.19'
 }
 
-sourceSets {
-    main {
-        output.resourcesDir = sourceSets.main.output.classesDir
-    }
-    test {
-        output.resourcesDir = sourceSets.test.output.classesDir
-    }
-}
+//sourceSets {
+//    test {
+//        output.resourcesDir = sourceSets.test.output.classesDir
+//    }
+//}
 
-println sourceSets.main.output.resourcesDir
-println sourceSets.test.output.resourcesDir
+//println sourceSets.test.output.resourcesDir
 
 jar {
 
 }
 
 task fulljar(type: Jar) {
-    classifier = "deps"
+    classifier = "standalone"
     from configurations.runtime.asFileTree.files.collect { zipTree(it) }
+    from sourceSets.main.output.classesDirs
     manifest {
         attributes 'Main-Class': mainClassName
     }
