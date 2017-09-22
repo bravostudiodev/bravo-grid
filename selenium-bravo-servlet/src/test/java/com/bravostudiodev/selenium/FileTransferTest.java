@@ -100,8 +100,8 @@ public class FileTransferTest {
 
     @Test
     public void canUploadZip() throws URISyntaxException, IOException {
-        File currentClassURI = new File(FileTransferTest.class.getProtectionDomain().getCodeSource().getLocation().toURI());
-        String uploadDir = new File(currentClassURI, "upload").getAbsolutePath();
+        File uploadDirFile = new File(getClass().getClassLoader().getResource("upload").getFile());
+        String uploadDir = uploadDirFile.getAbsolutePath();
         ByteArrayOutputStream osBytes = new ByteArrayOutputStream();
         zipIt(uploadDir, osBytes);
 
