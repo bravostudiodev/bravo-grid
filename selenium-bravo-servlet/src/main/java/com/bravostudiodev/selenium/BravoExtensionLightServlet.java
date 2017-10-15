@@ -4,6 +4,10 @@ import com.google.gson.Gson;
 import io.sterodium.rmi.protocol.MethodInvocationDto;
 import io.sterodium.rmi.protocol.MethodInvocationResultDto;
 import io.sterodium.rmi.protocol.server.RmiFacade;
+import org.sikuli.api.DesktopScreenRegion;
+import org.sikuli.api.robot.desktop.DesktopKeyboard;
+import org.sikuli.api.robot.desktop.DesktopMouse;
+import org.sikuli.api.robot.desktop.DesktopScreen;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -27,22 +31,26 @@ public class BravoExtensionLightServlet extends HttpServlet {
 
     private final RmiFacade rmiFacade;
 
+    private static void AddToRmiFacade(RmiFacade rmif, String objId, Object obj, String objDescription) {
+        try {
+            rmif.add(objId, obj);
+        } catch (ExceptionInInitializerError e) {
+            LOGGER.log(Level.SEVERE, objDescription + " operations are not available on this environment.", e);
+            throw e;
+        }
+    }
     public BravoExtensionLightServlet() {
         super();
 
         rmiFacade = new RmiFacade();
-        try {
-            rmiFacade.add("screen", new SikuliScreen());
-        } catch (ExceptionInInitializerError e) {
-            LOGGER.log(Level.SEVERE, "Sikuli operations are not available on this environment.", e);
-            throw e;
-        }
-        try {
-            rmiFacade.add("files", new FileTransfer());
-        } catch (ExceptionInInitializerError e) {
-            LOGGER.log(Level.SEVERE, "File transfer is not available on this environment.", e);
-            throw e;
-        }
+        AddToRmiFacade(rmiFacade, "screen", new SikuliScreen(), "Sikuli");
+        DesktopScreenRegion desktopScreenRegion = new DesktopScreenRegion();
+        DesktopScreen desktopScreen = (DesktopScreen) desktopScreenRegion.getScreen();
+        AddToRmiFacade(rmiFacade, "primary_screen_region", new DesktopScreenRegion(), "Sikuli desktop region");
+        AddToRmiFacade(rmiFacade, "primary_screen", desktopScreen, "DeskSikuli desktop");
+        AddToRmiFacade(rmiFacade, "mouse", new DesktopMouse(), "Mouse pointer");
+        AddToRmiFacade(rmiFacade, "keyboard", new DesktopKeyboard(), "Keyboard");
+        AddToRmiFacade(rmiFacade, "files", new FileTransfer(), "File transfer");
     }
 
     @Override

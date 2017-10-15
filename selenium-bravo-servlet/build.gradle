@@ -23,12 +23,27 @@ dependencies {
     compile 'org.seleniumhq.selenium:jetty-repacked:9.4.5.v20170502'
     compile 'commons-io:commons-io:2.5'
     compile 'org.sikuli:sikuli-api:1.2.0'
-    compile 'org.bytedeco.javacpp-presets:opencv:2.4.10-0.10'
-    compile 'org.bytedeco.javacpp-presets:opencv:2.4.10-0.10:linux-x86'
-    compile 'org.bytedeco.javacpp-presets:opencv:2.4.10-0.10:linux-x86_64'
-    compile 'org.bytedeco.javacpp-presets:opencv:2.4.10-0.10:windows-x86'
-    compile 'org.bytedeco.javacpp-presets:opencv:2.4.10-0.10:windows-x86_64'
-    compile 'org.bytedeco.javacpp-presets:opencv:2.4.10-0.10:macosx-x86_64'
+    //compile 'org.bytedeco.javacpp-presets:opencv:2.4.10-0.10'
+//    compile 'org.bytedeco.javacpp-presets:opencv:2.4.10-0.10:linux-x86'
+//    compile 'org.bytedeco.javacpp-presets:opencv:2.4.10-0.10:linux-x86_64'
+//    compile 'org.bytedeco.javacpp-presets:opencv:2.4.10-0.10:windows-x86'
+//    compile 'org.bytedeco.javacpp-presets:opencv:2.4.10-0.10:windows-x86_64'
+//    compile 'org.bytedeco.javacpp-presets:opencv:2.4.10-0.10:macosx-x86_64'
+
+    compile 'org.bytedeco.javacpp-presets:opencv:3.2.0-1.3:linux-x86_64'
+    compile 'org.bytedeco.javacpp-presets:opencv:3.2.0-1.3:windows-x86_64'
+    compile 'org.bytedeco.javacpp-presets:opencv:3.2.0-1.3:macosx-x86_64'
+    compile 'org.bytedeco:javacpp:1.3.3'
+    compile ('org.bytedeco:javacv:1.3.3') {
+        exclude group: "org.bytedeco.javacpp-presets", module: "ffmpeg"
+        exclude group: "org.bytedeco.javacpp-presets", module: "flycapture"
+        exclude group: "org.bytedeco.javacpp-presets", module: "libdc1394"
+        exclude group: "org.bytedeco.javacpp-presets", module: "libfreenect"
+        exclude group: "org.bytedeco.javacpp-presets", module: "libfreenect2"
+        exclude group: "org.bytedeco.javacpp-presets", module: "librealsense"
+        exclude group: "org.bytedeco.javacpp-presets", module: "videoinput"
+        exclude group: "org.bytedeco.javacpp-presets", module: "artoolkitplus"
+    }
 
     testCompile 'org.hamcrest:hamcrest-all:1.3'
     testCompile 'junit:junit:4.12'
