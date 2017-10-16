@@ -39,6 +39,7 @@ public class BravoExtensionLightServlet extends HttpServlet {
             throw e;
         }
     }
+    
     public BravoExtensionLightServlet() {
         super();
 
@@ -47,7 +48,7 @@ public class BravoExtensionLightServlet extends HttpServlet {
         DesktopScreenRegion desktopScreenRegion = new DesktopScreenRegion();
         DesktopScreen desktopScreen = (DesktopScreen) desktopScreenRegion.getScreen();
         AddToRmiFacade(rmiFacade, "primary_screen_region", new DesktopScreenRegion(), "Sikuli desktop region");
-        AddToRmiFacade(rmiFacade, "primary_screen", desktopScreen, "DeskSikuli desktop");
+        AddToRmiFacade(rmiFacade, "primary_screen", desktopScreen, "Sikuli desktop");
         AddToRmiFacade(rmiFacade, "mouse", new DesktopMouse(), "Mouse pointer");
         AddToRmiFacade(rmiFacade, "keyboard", new DesktopKeyboard(), "Keyboard");
         AddToRmiFacade(rmiFacade, "files", new FileTransfer(), "File transfer");
