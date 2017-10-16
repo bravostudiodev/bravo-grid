@@ -5,6 +5,7 @@ import org.bytedeco.javacpp.opencv_core;
 import org.sikuli.api.*;
 import org.sikuli.api.robot.desktop.DesktopKeyboard;
 import org.sikuli.api.robot.desktop.DesktopMouse;
+import org.sikuli.api.robot.desktop.DesktopScreen;
 
 import javax.imageio.ImageIO;
 import javax.xml.bind.DatatypeConverter;
@@ -31,17 +32,19 @@ public class SikuliScreen {
 
     }
 
-    private static String objectSerialize(Object obj) throws IOException {
+    private static String objectSerialize(Object obj) {
         try (final ByteArrayOutputStream byout = new ByteArrayOutputStream();
              final ObjectOutputStream out = new ObjectOutputStream(byout)
         ) {
             out.writeObject(obj);
             LOGGER.info("Serialized data");
             return DatatypeConverter.printBase64Binary(byout.toByteArray());
+        } catch(IOException e) {
+            throw new ObjectSerializeException("Failed object serialization");
         }
     }
 
-    private static Object objectParse(String objStr) throws IOException, ClassNotFoundException {
+    private static Object objectParse(String objStr) {
         byte[] objBytes = DatatypeConverter.parseBase64Binary(objStr);
 
         try (final ByteArrayInputStream byin = new ByteArrayInputStream(objBytes);
@@ -49,10 +52,12 @@ public class SikuliScreen {
         ) {
             LOGGER.info("Parsing data...");
             return in.readObject();
+        } catch(IOException | ClassNotFoundException e) {
+            throw new ObjectParseException("Failed object parsing");
         }
     }
 
-    public static ScreenRegion getScreenRegion(int x, int y, int w, int h) {
+    private static ScreenRegion getScreenRegion(int x, int y, int w, int h) {
         ScreenRegion primary = new DesktopScreenRegion();
         return primary.getRelativeScreenRegion(x, y, w, h);
     }
@@ -91,120 +96,131 @@ public class SikuliScreen {
         return imageToBase64(region.capture());
     }
 
-    public void drag() {
-        new DesktopMouse().drag(new DesktopScreenRegion().getCenter());
+    public String getScreenRectangle() {
+        return objectSerialize(new DesktopScreen(0).getBounds());
     }
 
-    public void drag(int xOff, int yOff) {
-        new DesktopMouse().drag(new DesktopScreenRegion().getCenter().getRelativeScreenLocation(xOff, yOff));
+    public String getScreenDimensions() {
+        return objectSerialize(new DesktopScreen(0).getSize());
     }
 
-    public void drag(ScreenRegion region) {
+    private void drag(java.awt.Rectangle rc) {
+        if(null == rc)
+            return;
+        ScreenRegion region = getScreenRegion(rc);
+        if(null == region)
+            return;
         new DesktopMouse().drag(region.getCenter());
     }
 
-    public void drag(ScreenRegion region, int xOff, int yOff) {
-        new DesktopMouse().drag(region.getCenter().getRelativeScreenLocation(xOff, yOff));
+    private void drop(java.awt.Rectangle rc) {
+        if(null == rc)
+            return;
+        ScreenRegion region = getScreenRegion(rc);
+        if(null == region)
+            return;
+        new DesktopMouse().drop(region.getCenter());
+    }
+
+    private void move(java.awt.Rectangle rc) {
+        if(null == rc)
+            return;
+        ScreenRegion region = getScreenRegion(rc);
+        if(null == region)
+            return;
+        new DesktopMouse().move(region.getCenter());
+    }
+
+    private void hover(java.awt.Rectangle rc) {
+        if(null == rc)
+            return;
+        ScreenRegion region = getScreenRegion(rc);
+        if(null == region)
+            return;
+        new DesktopMouse().hover(region.getCenter());
+    }
+
+    private void click(java.awt.Rectangle rc) {
+        if(null == rc)
+            return;
+        ScreenRegion region = getScreenRegion(rc);
+        if(null == region)
+            return;
+        new DesktopMouse().click(region.getCenter());
+    }
+
+    private void doubleClick(java.awt.Rectangle rc) {
+        if(null == rc)
+            return;
+        ScreenRegion region = getScreenRegion(rc);
+        if(null == region)
+            return;
+        new DesktopMouse().doubleClick(region.getCenter());
+    }
+
+    private void rightClick(java.awt.Rectangle rc) {
+        if(null == rc)
+            return;
+        ScreenRegion region = getScreenRegion(rc);
+        if(null == region)
+            return;
+        new DesktopMouse().rightClick(region.getCenter());
+    }
+
+    public void drag(String rcB64) {
+        drag((java.awt.Rectangle) objectParse(rcB64));
+    }
+
+    public void drop(String rcB64) {
+        drop((java.awt.Rectangle) objectParse(rcB64));
+    }
+
+    public void move(String rcB64) {
+        move((java.awt.Rectangle) objectParse(rcB64));
+    }
+
+    public void hover(String rcB64) {
+        hover((java.awt.Rectangle) objectParse(rcB64));
+    }
+
+    public void click(String rcB64) {
+        click((java.awt.Rectangle) objectParse(rcB64));
+    }
+
+    public void doubleClick(String rcB64) {
+        doubleClick((java.awt.Rectangle) objectParse(rcB64));
+    }
+
+    public void rightClick(String rcB64) {
+        rightClick((java.awt.Rectangle) objectParse(rcB64));
+    }
+
+    public void drag() {
+        new DesktopMouse().drag(new DesktopScreenRegion().getCenter());
     }
 
     public void drop() {
         new DesktopMouse().click(new DesktopScreenRegion().getCenter());
     }
 
-    public void drop(int xOff, int yOff) {
-        new DesktopMouse().drop(new DesktopScreenRegion().getCenter().getRelativeScreenLocation(xOff, yOff));
-    }
-
-    public void drop(ScreenRegion region) {
-        new DesktopMouse().drop(region.getCenter());
-    }
-
-    public void drop(ScreenRegion region, int xOff, int yOff) {
-        new DesktopMouse().drop(region.getCenter().getRelativeScreenLocation(xOff, yOff));
-    }
-
     public void click() {
         new DesktopMouse().click(new DesktopScreenRegion().getCenter());
-    }
-
-    public void click(int xOff, int yOff) {
-        new DesktopMouse().click(new DesktopScreenRegion().getCenter().getRelativeScreenLocation(xOff, yOff));
-    }
-
-    public void click(ScreenRegion region) {
-        ScreenLocation loc = region.getCenter();
-        LOGGER.info("clicking region");
-        new DesktopMouse().click(loc);
-    }
-
-    public void click(ScreenRegion region, int xOff, int yOff) {
-        new DesktopMouse().click(region.getCenter().getRelativeScreenLocation(xOff, yOff));
     }
 
     public void rightClick() {
         new DesktopMouse().rightClick(new DesktopScreenRegion().getCenter());
     }
 
-    public void rightClick(int xOff, int yOff) {
-        new DesktopMouse().rightClick(new DesktopScreenRegion().getCenter().getRelativeScreenLocation(xOff, yOff));
-    }
-
-    public void rightClick(ScreenRegion region) {
-        new DesktopMouse().rightClick(region.getCenter());
-    }
-
-    public void rightClick(ScreenRegion region, int xOff, int yOff) {
-        new DesktopMouse().rightClick(region.getCenter().getRelativeScreenLocation(xOff, yOff));
-    }
-
     public void doubleClick() {
         new DesktopMouse().doubleClick(new DesktopScreenRegion().getCenter());
-    }
-
-    public void doubleClick(int xOff, int yOff) {
-        new DesktopMouse().doubleClick(new DesktopScreenRegion().getCenter().getRelativeScreenLocation(xOff, yOff));
-    }
-
-    public void doubleClick(ScreenRegion region) {
-        new DesktopMouse().doubleClick(region.getCenter());
-    }
-
-    public void doubleClick(ScreenRegion region, int xOff, int yOff) {
-        new DesktopMouse().doubleClick(region.getCenter().getRelativeScreenLocation(xOff, yOff));
     }
 
     public void hover() {
         new DesktopMouse().hover(new DesktopScreenRegion().getCenter());
     }
 
-    @SuppressWarnings("unused")
-    public void hover(int xOff, int yOff) {
-        new DesktopMouse().hover(new DesktopScreenRegion().getCenter().getRelativeScreenLocation(xOff, yOff));
-    }
-
-    public void hover(ScreenRegion region) {
-        new DesktopMouse().hover(region.getCenter());
-    }
-
-    @SuppressWarnings("unused")
-    public void hover(ScreenRegion region, int xOff, int yOff) {
-        new DesktopMouse().hover(region.getCenter().getRelativeScreenLocation(xOff, yOff));
-    }
-
     public void move() {
         new DesktopMouse().move(new DesktopScreenRegion().getCenter());
-    }
-
-    public void move(int xOff, int yOff) {
-        new DesktopMouse().move(new DesktopScreenRegion().getCenter().getRelativeScreenLocation(xOff, yOff));
-    }
-
-    public void move(ScreenRegion region) {
-        new DesktopMouse().move(region.getCenter());
-    }
-
-    public void move(ScreenRegion region, int xOff, int yOff) {
-        new DesktopMouse().move(region.getCenter().getRelativeScreenLocation(xOff, yOff));
     }
 
     public void press() {
@@ -295,31 +311,17 @@ public class SikuliScreen {
         }
     }
 
-//    public ScreenRegion find(String targetName) {
-//        LOGGER.info("finding target " + targetName);
-//        ImageTarget targetImg = images.get(targetName);
-//        if (null == targetImg)
-//            throw new UnknownImageTarget("Unkown target name " + targetName + ", not added with addTarget method");
-//        try {
-//            return new DesktopScreenRegion().find(targetImg);
-//        } catch (Exception e) {
-//            LOGGER.log(Level.WARNING, "Didn't find image " + targetName);
-//            throw e;
-//        }
-//    }
-//
-//    public List<ScreenRegion> findAll(String targetName) {
-//        LOGGER.info("finding all targets " + targetName);
-//        ImageTarget targetImg = images.get(targetName);
-//        if (null == targetImg)
-//            throw new UnknownImageTarget("Unkown target name " + targetName + ", not added with addTarget method");
-//        try {
-//            return new DesktopScreenRegion().findAll(targetImg);
-//        } catch (Exception e) {
-//            LOGGER.log(Level.WARNING, "Didn't find image " + targetName);
-//            throw e;
-//        }
-//    }
+    public static class ObjectParseException extends RuntimeException {
+        public ObjectParseException(String msg) {
+            super(msg);
+        }
+    }
+
+    public static class ObjectSerializeException extends RuntimeException {
+        public ObjectSerializeException(String msg) {
+            super(msg);
+        }
+    }
 
     private static byte[] getPngBytes(BufferedImage biImg) throws IOException {
         try (final ByteArrayOutputStream os = new ByteArrayOutputStream()) {
@@ -328,16 +330,11 @@ public class SikuliScreen {
         }
     }
 
-    public static ArrayList<java.awt.Rectangle> findAll(BufferedImage biFull, BufferedImage biTpl, double MIN_SCORE, java.awt.Dimension fullDim) throws IOException {
+    private static ArrayList<java.awt.Rectangle> findAll(BufferedImage biFull, BufferedImage biTpl, double MIN_SCORE, java.awt.Dimension fullDim) throws IOException {
         assert 0.0 <= MIN_SCORE && MIN_SCORE <= 1.0;
-
-        // new Integer(b64PNG.hashCode()).toString();
 
         byte[] byFull = getPngBytes(biFull);
         byte[] byTpl = getPngBytes(biTpl);
-//        Mat imgSrcColor = imread(pathImage);
-//        Mat imgSrcGray = new Mat(imgSrcColor.size(), CV_8UC1);
-//        cvtColor(imgSrcColor, imgSrcGray, COLOR_BGR2GRAY);
         Mat imgSrcGray = imdecode(new Mat(byFull), CV_LOAD_IMAGE_GRAYSCALE);
         Mat imgTplGray = imdecode(new Mat(byTpl), CV_LOAD_IMAGE_GRAYSCALE);
         Size size = new Size(imgSrcGray.cols() - imgTplGray.cols() + 1, imgSrcGray.rows() - imgTplGray.rows() + 1);
@@ -366,18 +363,23 @@ public class SikuliScreen {
         return lMatches;
     }
 
-    public static java.awt.Rectangle findMostSimilar(BufferedImage biFull, BufferedImage biTpl, double MIN_SCORE, java.awt.Dimension fullDim) throws IOException {
+    private static java.awt.Rectangle findMostSimilar(BufferedImage biFull, BufferedImage biTpl, double MIN_SCORE, java.awt.Dimension fullDim) throws IOException {
         ArrayList<java.awt.Rectangle> lMatches = findAll(biFull, biTpl, MIN_SCORE, fullDim);
         return lMatches.isEmpty() ? null : lMatches.get(0); // first match has highest similarity
     }
 
-    public String findAllOnScreen(String targetName, double MIN_SCORE, java.awt.Dimension fullDim) throws IOException {
+    public String allOnScreenTargets(String targetName, double MIN_SCORE, java.awt.Dimension fullDim) throws IOException {
         LOGGER.info("finding target " + targetName);
         ImageTarget targetImg = images.get(targetName);
         if (null == targetImg)
             throw new UnknownImageTarget("Unkown target name " + targetName + ", not added with addTarget method");
         ScreenRegion primary = new DesktopScreenRegion();
-
         return objectSerialize(findAll(primary.capture(), targetImg.getImage(), MIN_SCORE, fullDim));
+    }
+
+    public String allOnScreenB64Images(String b64Image, double MIN_SCORE, java.awt.Dimension fullDim) throws IOException {
+        LOGGER.info("finding target image from base64 string");
+        ScreenRegion primary = new DesktopScreenRegion();
+        return objectSerialize(findAll(primary.capture(), imageFromBase64(b64Image), MIN_SCORE, fullDim));
     }
 }
