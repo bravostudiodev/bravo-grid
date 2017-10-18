@@ -23,6 +23,7 @@ import static org.bytedeco.javacpp.opencv_imgcodecs.*;
 /**
  * Created by IgorV on 3.11.2016.
  */
+@SuppressWarnings("unused")
 public class SikuliScreen {
     private static final Logger LOGGER = Logger.getLogger(SikuliScreen.class.getName());
 
@@ -89,11 +90,14 @@ public class SikuliScreen {
         return imageToBase64(new DesktopScreenRegion().capture());
     }
 
-    @SuppressWarnings("unused")
-    public String takeBase64Screenshot(java.awt.Rectangle rc) throws IOException {
+    private String takeBase64Screenshot(java.awt.Rectangle rc) throws IOException {
         ScreenRegion region = getScreenRegion(rc);
         LOGGER.info("taking region screenshot");
         return imageToBase64(region.capture());
+    }
+
+    public String takeBase64Screenshot(String rcB64) throws IOException {
+        return takeBase64Screenshot((java.awt.Rectangle) objectParse(rcB64));
     }
 
     public String getScreenRectangle() {
