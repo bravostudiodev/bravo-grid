@@ -44,6 +44,8 @@ public class BravoExtensionLightServlet extends HttpServlet {
         super();
 
         rmiFacade = new RmiFacade();
+        RuntimeJar remoteExtender = new RuntimeJar((id, obj) -> AddToRmiFacade(rmiFacade, id, obj, id));
+        AddToRmiFacade(rmiFacade, "remote_extender", remoteExtender, "Remote extender");
         AddToRmiFacade(rmiFacade, "screen", new SikuliScreen(), "Sikuli");
         DesktopScreenRegion desktopScreenRegion = new DesktopScreenRegion();
         DesktopScreen desktopScreen = (DesktopScreen) desktopScreenRegion.getScreen();
