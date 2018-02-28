@@ -1,5 +1,5 @@
 group 'com.bravostudiodev'
-version '2.4-SNAPSHOT'
+version '2.6-SNAPSHOT'
 
 apply plugin: 'maven'
 apply plugin: 'maven-publish' // task publishToMavenLocal
