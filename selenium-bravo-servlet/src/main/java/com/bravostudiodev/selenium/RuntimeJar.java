@@ -8,9 +8,12 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.function.BiConsumer;
+import java.util.logging.Logger;
 
 public class RuntimeJar {
-    BiConsumer<String, Object> addToRmiFacade = null;
+    private static final Logger LOGGER = Logger.getLogger(SikuliScreen.class.getName());
+
+    private BiConsumer<String, Object> addToRmiFacade = null;
     public RuntimeJar(BiConsumer<String, Object> addToRmiFacade) {
         this.addToRmiFacade = addToRmiFacade;
     }
@@ -20,6 +23,7 @@ public class RuntimeJar {
      * if the library is already loaded.
      */
     private synchronized void loadModule(String jarPath) throws TypeNotPresentException {
+        LOGGER.info("Loading module " + jarPath);
         File jar = new File(jarPath);
         try {
             /*We are using reflection here to circumvent encapsulation; addURL is not public*/
@@ -33,6 +37,7 @@ public class RuntimeJar {
             Method method = URLClassLoader.class.getDeclaredMethod("addURL", new Class[]{java.net.URL.class});
             method.setAccessible(true); /*promote the method to public access*/
             method.invoke(loader, new Object[]{url});
+            LOGGER.info("... loaded module " + jarPath);
         } catch (final NoSuchMethodException | IllegalAccessException
                 | MalformedURLException | InvocationTargetException e){
             throw new TypeNotPresentException("FAILED loading module ", e);
@@ -41,7 +46,9 @@ public class RuntimeJar {
 
     public void addRemoteInstance(String jarPath, String remoteId, String className) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         loadModule(jarPath);
+        LOGGER.info("Creating object of class " + className);
         Object obj = Class.forName(className).newInstance();
+        LOGGER.info("Registering object " + className);
         addToRmiFacade.accept(remoteId, obj);
     }
 }
